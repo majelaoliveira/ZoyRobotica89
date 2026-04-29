@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arduino como Corpo Humano – Mapa Mental</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cerebro:   #7c3aed;
+  --nervos:    #0891b2;
+  --musculos:  #dc2626;
+  --relogio:   #d97706;
+  --boca:      #059669;
+  --fundo:     #0f0f1a;
+  --card-bg:   #1a1a2e;
+  --card-brd:  rgba(255,255,255,.08);
+  --texto:     #e2e8f0;
+  --texto2:    #94a3b8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── estrelas de fundo ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(124,58,237,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(8,145,178,.10) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  padding: 48px 20px 32px;
+  position: relative;
+}
+.tag {
+  display: inline-block;
+  background: rgba(124,58,237,.25);
+  border: 1px solid rgba(124,58,237,.5);
+  color: #c4b5fd;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+header h1 {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(2rem, 6vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+header h1 .ard { color: #60a5fa; }
+header h1 .corp { color: #c4b5fd; }
+header p { color: var(--texto2); font-size: 1rem; max-width: 500px; margin: 0 auto 28px; }
+
+/* ── PERGUNTA CENTRAL ── */
+.pergunta-central {
+  background: linear-gradient(135deg, rgba(124,58,237,.2), rgba(8,145,178,.2));
+  border: 2px solid rgba(124,58,237,.4);
+  border-radius: 20px;
+  padding: 20px 32px;
+  display: inline-block;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #e0e7ff;
+  margin-bottom: 12px;
+}
+.pergunta-central span { color: var(--amarelo, #fbbf24); }
+
+/* ── GRID PRINCIPAL ── */
+.grid-corpo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+/* ── CARDS DE PARTE DO CORPO ── */
+.parte {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-brd);
+  border-radius: 22px;
+  overflow: hidden;
+  transition: transform .25s, box-shadow .25s;
+  cursor: pointer;
+}
+.parte:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+.parte-header {
+  padding: 20px 22px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.emoji-grande {
+  font-size: 2.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.4));
+}
+.parte-titulo-wrap { flex: 1; }
+.parte-corpo-label {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: .6;
+  margin-bottom: 2px;
+}
+.parte-titulo {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.parte-subtitulo {
+  font-size: .82rem;
+  font-weight: 600;
+  opacity: .55;
+  margin-top: 2px;
+}
+
+/* barra colorida topo */
+.parte::before {
+  content: '';
+  display: block;
+  height: 4px;
+  width: 100%;
+}
+
+/* ── VERBOS / INTENÇÕES ── */
+.verbos {
+  padding: 0 22px 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.verbo-chip {
+  font-size: .75rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform .15s, opacity .15s;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+}
+.verbo-chip:hover { transform: scale(1.08); opacity: .9; }
+
+/* ── PAINEL EXPANDÍVEL ── */
+.painel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .45s cubic-bezier(.4,0,.2,1);
+}
+.painel.aberto { max-height: 900px; }
+.painel-inner { padding: 16px 22px 22px; border-top: 1px solid var(--card-brd); }
+
+.painel-titulo {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* blocos de conteúdo */
+.bloco {
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-left: 3px solid;
+}
+.bloco-titulo {
+  font-weight: 800;
+  font-size: .88rem;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.bloco p { font-size: .84rem; color: var(--texto2); line-height: 1.6; }
+.bloco code, code {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: .82rem;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(0,0,0,.4);
+}
+
+pre {
+  font-family: 'Share Tech Mono', monospace;
+  background: #0d1117;
+  color: #e2e8f0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: .78rem;
+  line-height: 1.8;
+  overflow-x: auto;
+  margin-top: 8px;
+}
+.kw  { color: #f472b6; }
+.fn  { color: #7dd3fc; }
+.str { color: #86efac; }
+.cm  { color: #6b7280; font-style: italic; }
+.nm  { color: #fbbf24; }
+
+/* ── CORES POR PARTE ── */
+.cerebro-c  { --cor: var(--cerebro);  --cor-l: #ede9fe; }
+.nervos-c   { --cor: var(--nervos);   --cor-l: #cffafe; }
+.musculos-c { --cor: var(--musculos); --cor-l: #fee2e2; }
+.relogio-c  { --cor: var(--relogio);  --cor-l: #fef3c7; }
+.boca-c     { --cor: var(--boca);     --cor-l: #d1fae5; }
+
+.parte.cerebro-c::before  { background: linear-gradient(90deg, var(--cerebro), #a78bfa); }
+.parte.nervos-c::before   { background: linear-gradient(90deg, var(--nervos), #22d3ee); }
+.parte.musculos-c::before { background: linear-gradient(90deg, var(--musculos), #f97316); }
+.parte.relogio-c::before  { background: linear-gradient(90deg, var(--relogio), #fcd34d); }
+.parte.boca-c::before     { background: linear-gradient(90deg, var(--boca), #34d399); }
+
+.parte-header { border-bottom: none; }
+.parte.cerebro-c  .parte-header { background: linear-gradient(135deg, rgba(124,58,237,.15), transparent); }
+.parte.nervos-c   .parte-header { background: linear-gradient(135deg, rgba(8,145,178,.15), transparent); }
+.parte.musculos-c .parte-header { background: linear-gradient(135deg, rgba(220,38,38,.15), transparent); }
+.parte.relogio-c  .parte-header { background: linear-gradient(135deg, rgba(217,119,6,.15), transparent); }
+.parte.boca-c     .parte-header { background: linear-gradient(135deg, rgba(5,150,105,.15), transparent); }
+
+.verbo-chip.cerebro-v  { background: rgba(124,58,237,.2);  color: #c4b5fd; border: 1px solid rgba(124,58,237,.4); }
+.verbo-chip.nervos-v   { background: rgba(8,145,178,.2);   color: #67e8f9; border: 1px solid rgba(8,145,178,.4); }
+.verbo-chip.musculos-v { background: rgba(220,38,38,.2);   color: #fca5a5; border: 1px solid rgba(220,38,38,.4); }
+.verbo-chip.relogio-v  { background: rgba(217,119,6,.2);   color: #fcd34d; border: 1px solid rgba(217,119,6,.4); }
+.verbo-chip.boca-v     { background: rgba(5,150,105,.2);   color: #6ee7b7; border: 1px solid rgba(5,150,105,.4); }
+
+.bloco.cerebro-b  { border-color: var(--cerebro); }
+.bloco.nervos-b   { border-color: var(--nervos); }
+.bloco.musculos-b { border-color: var(--musculos); }
+.bloco.relogio-b  { border-color: var(--relogio); }
+.bloco.boca-b     { border-color: var(--boca); }
+
+/* ── MAPA VISUAL NO TOPO ── */
+.mapa-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  max-width: 800px;
+  margin: 0 auto 40px;
+  padding: 0 20px;
+  position: relative;
+}
+.mv-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 12px 18px;
+  border-radius: 16px;
+  transition: background .2s;
+  text-decoration: none;
+  color: inherit;
+}
+.mv-item:hover { background: rgba(255,255,255,.06); }
+.mv-emoji { font-size: 2rem; }
+.mv-label { font-size: .72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; opacity: .6; }
+.mv-seta {
+  font-size: 1.4rem;
+  opacity: .3;
+  margin: 0 4px;
+  align-self: center;
+}
+
+/* ── FOOTER DICA ── */
+.footer-dica {
+  text-align: center;
+  padding: 28px 20px;
+  color: var(--texto2);
+  font-size: .85rem;
+  border-top: 1px solid var(--card-brd);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── BADGE "CLIQUE" ── */
+.badge-clique {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.08);
+  color: var(--texto2);
+  text-transform: uppercase;
+  margin-left: auto;
+}
+
+/* ── BARRA PROGRESSO ANALOGIA ── */
+.analogia-bar {
+  display: flex;
+  align-items: stretch;
+  background: rgba(255,255,255,.04);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0 20px 24px;
+  max-width: 1060px;
+  margin-left: auto; margin-right: auto;
+  font-size: .78rem;
+  font-weight: 700;
+}
+.an-item {
+  flex: 1;
+  padding: 10px 8px;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,.06);
+  line-height: 1.4;
+}
+.an-item:last-child { border-right: none; }
+.an-item .an-emoji { font-size: 1.3rem; display: block; margin-bottom: 3px; }
+.an-item .an-corpo { font-size: .65rem; opacity: .5; text-transform: uppercase; letter-spacing: 1px; }
+.an-item .an-ard { color: #60a5fa; }
+.an-sep { padding: 10px 4px; display: flex; align-items: center; opacity: .2; }
+
+/* responsivo */
+@media(max-width: 600px) {
+  .grid-corpo { grid-template-columns: 1fr; }
+  .analogia-bar { display: none; }
+  .mapa-visual { gap: 0; }
+  .mv-seta { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="tag">📟 Cartilha Arduino — 8º e 9º Ano</div>
+  <h1><span class="ard">Arduino</span> é como um<br><span class="corp">Corpo Humano</span></h1>
+  <p>Cada parte do corpo tem uma função. O Arduino também! Clique em cada parte para descobrir.</p>
+
+  <div class="pergunta-central">
+    🤔 O que eu <span style="color:#fbbf24">quero fazer</span>? → Qual parte do corpo eu uso?
+  </div>
+</header>
+
+<!-- BARRA DE ANALOGIA -->
+<div class="analogia-bar">
+  <div class="an-item">
+    <span class="an-emoji">🧠</span>
+    <span class="an-corpo">Cérebro</span>
+    <span class="an-ard">setup() + loop()</span>
+  </div>
+  <div class="an-sep">→</div>
+  <div class="an-item">
+    <span class="an-emoji">👁️ 👂</span>
+    <span class="an-corpo">Sentidos / Nervos</span>
+    <span class="an-ard">digitalRead / analogRead</span>
+  </div>
+  <div class="an-sep">→</div>
+  <div class="an-item">
+    <span class="an-emoji">💪</span>
+    <span class="an-corpo">Músculos</span>
+    <span class="an-ard">digitalWrite / analogWrite</span>
+  </div>
+  <div class="an-sep">→</div>
+  <div class="an-item">
+    <span class="an-emoji">⏰</span>
+    <span class="an-corpo">Coração / Ritmo</span>
+    <span class="an-ard">delay / millis</span>
+  </div>
+  <div class="an-sep">→</div>
+  <div class="an-item">
+    <span class="an-emoji">🗣️</span>
+    <span class="an-corpo">Boca / Voz</span>
+    <span class="an-ard">Serial.print</span>
+  </div>
+</div>
+
+<!-- CARDS -->
+<div class="grid-corpo">
+
+  <!-- ═══ CÉREBRO ═══ -->
+  <div class="parte cerebro-c" onclick="toggle(this)">
+    <div class="parte-header">
+      <div class="emoji-grande">🧠</div>
+      <div class="parte-titulo-wrap">
+        <div class="parte-corpo-label">No corpo humano</div>
+        <div class="parte-titulo" style="color:#c4b5fd">O Cérebro</div>
+        <div class="parte-subtitulo">Pensa, decide, controla tudo</div>
+      </div>
+      <div class="badge-clique">+ ver</div>
+    </div>
+    <div class="verbos">
+      <span class="verbo-chip cerebro-v">🔁 Repetir sempre</span>
+      <span class="verbo-chip cerebro-v">⚙️ Preparar uma vez</span>
+      <span class="verbo-chip cerebro-v">❓ Comparar e decidir</span>
+    </div>
+    <div class="painel">
+      <div class="painel-inner">
+        <div class="painel-titulo" style="color:#c4b5fd">🧠 No Arduino: <code>setup()</code> + <code>loop()</code> + <code>if/else</code></div>
+
+        <div class="bloco cerebro-b">
+          <div class="bloco-titulo">⚙️ setup() — "Acordar e se preparar"</div>
+          <p>Roda <strong>uma vez só</strong> quando você liga o Arduino. É como o cérebro acordando e checando tudo antes de começar o dia.</p>
+          <pre><span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">pinMode</span>(<span class="nm">13</span>, OUTPUT);   <span class="cm">// diz: o pino 13 é saída</span>
+  Serial.<span class="fn">begin</span>(<span class="nm">9600</span>);   <span class="cm">// liga a comunicação</span>
+}</pre>
+        </div>
+
+        <div class="bloco cerebro-b">
+          <div class="bloco-titulo">🔁 loop() — "O coração que nunca para"</div>
+          <p>Roda <strong>para sempre</strong>, repetindo sem parar — como o coração batendo. Tudo que o Arduino faz fica aqui dentro.</p>
+          <pre><span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// tudo aqui repete infinitamente!</span>
+  <span class="fn">digitalWrite</span>(<span class="nm">13</span>, HIGH);
+  <span class="fn">delay</span>(<span class="nm">1000</span>);
+  <span class="fn">digitalWrite</span>(<span class="nm">13</span>, LOW);
+  <span class="fn">delay</span>(<span class="nm">1000</span>);
+}</pre>
+        </div>
+
+        <div class="bloco cerebro-b">
+          <div class="bloco-titulo">❓ if / else — "Tomar uma decisão"</div>
+          <p>O cérebro decide: <em>"SE acontecer isso, faço aquilo. SENÃO, faço outra coisa."</em></p>
+          <pre><span class="kw">if</span> (botao == HIGH) {
+  <span class="fn">digitalWrite</span>(led, HIGH);  <span class="cm">// acende</span>
+} <span class="kw">else</span> {
+  <span class="fn">digitalWrite</span>(led, LOW);   <span class="cm">// apaga</span>
+}</pre>
+        </div>
+
+        <div style="background:rgba(124,58,237,.1);border-radius:12px;padding:12px 14px;font-size:.82rem;color:#c4b5fd;font-weight:600">
+          💡 <strong>Lembre:</strong> setup() = café da manhã (uma vez) &nbsp;|&nbsp; loop() = respirar (nunca para)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NERVOS / SENTIDOS ═══ -->
+  <div class="parte nervos-c" onclick="toggle(this)">
+    <div class="parte-header">
+      <div class="emoji-grande">👁️</div>
+      <div class="parte-titulo-wrap">
+        <div class="parte-corpo-label">No corpo humano</div>
+        <div class="parte-titulo" style="color:#67e8f9">Os Sentidos &amp; Nervos</div>
+        <div class="parte-subtitulo">Veem, ouvem, sentem o mundo</div>
+      </div>
+      <div class="badge-clique">+ ver</div>
+    </div>
+    <div class="verbos">
+      <span class="verbo-chip nervos-v">👆 Ler um botão</span>
+      <span class="verbo-chip nervos-v">🌡️ Ler um sensor</span>
+      <span class="verbo-chip nervos-v">📡 Receber info</span>
+    </div>
+    <div class="painel">
+      <div class="painel-inner">
+        <div class="painel-titulo" style="color:#67e8f9">👁️ No Arduino: <code>digitalRead</code> + <code>analogRead</code></div>
+
+        <div class="bloco nervos-b">
+          <div class="bloco-titulo">👆 digitalRead() — "Liga ou desliga?"</div>
+          <p>Lê se algo está <strong>ligado (1)</strong> ou <strong>desligado (0)</strong>. Igual perguntar: "a luz está acesa?" — só tem duas respostas.</p>
+          <pre><span class="kw">int</span> estado = <span class="fn">digitalRead</span>(<span class="nm">2</span>);
+<span class="cm">// estado = HIGH (1) ou LOW (0)</span>
+
+<span class="kw">if</span> (estado == HIGH) {
+  Serial.<span class="fn">println</span>(<span class="str">"Botão apertado!"</span>);
+}</pre>
+        </div>
+
+        <div class="bloco nervos-b">
+          <div class="bloco-titulo">🌡️ analogRead() — "Quanto exatamente?"</div>
+          <p>Lê valores de <strong>0 a 1023</strong> — igual um termômetro que lê a temperatura exata, não só "quente ou frio".</p>
+          <pre><span class="kw">int</span> luz = <span class="fn">analogRead</span>(<span class="nm">A0</span>);
+<span class="cm">// luz = 0 (escuro) até 1023 (clarão)</span>
+
+Serial.<span class="fn">print</span>(<span class="str">"Luminosidade: "</span>);
+Serial.<span class="fn">println</span>(luz);</pre>
+        </div>
+
+        <div style="background:rgba(8,145,178,.1);border-radius:12px;padding:12px 14px;font-size:.82rem;color:#67e8f9;font-weight:600">
+          💡 <strong>Lembre:</strong> digital = interruptor (só 0 ou 1) &nbsp;|&nbsp; analógico = dimmer (0 até 1023)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MÚSCULOS ═══ -->
+  <div class="parte musculos-c" onclick="toggle(this)">
+    <div class="parte-header">
+      <div class="emoji-grande">💪</div>
+      <div class="parte-titulo-wrap">
+        <div class="parte-corpo-label">No corpo humano</div>
+        <div class="parte-titulo" style="color:#fca5a5">Os Músculos</div>
+        <div class="parte-subtitulo">Movem, agem, fazem acontecer</div>
+      </div>
+      <div class="badge-clique">+ ver</div>
+    </div>
+    <div class="verbos">
+      <span class="verbo-chip musculos-v">💡 Ligar LED</span>
+      <span class="verbo-chip musculos-v">🔌 Ligar motor</span>
+      <span class="verbo-chip musculos-v">🌓 Controlar brilho</span>
+    </div>
+    <div class="painel">
+      <div class="painel-inner">
+        <div class="painel-titulo" style="color:#fca5a5">💪 No Arduino: <code>digitalWrite</code> + <code>analogWrite</code></div>
+
+        <div class="bloco musculos-b">
+          <div class="bloco-titulo">💡 digitalWrite() — "Liga ou desliga o músculo"</div>
+          <p>Manda o pino para <strong>HIGH (5V = ligado)</strong> ou <strong>LOW (0V = desligado)</strong>. Como contrair ou relaxar um músculo.</p>
+          <pre><span class="fn">digitalWrite</span>(<span class="nm">13</span>, HIGH);  <span class="cm">// LED acende  💡</span>
+<span class="fn">delay</span>(<span class="nm">500</span>);
+<span class="fn">digitalWrite</span>(<span class="nm">13</span>, LOW);   <span class="cm">// LED apaga   ⬛</span>
+<span class="fn">delay</span>(<span class="nm">500</span>);</pre>
+        </div>
+
+        <div class="bloco musculos-b">
+          <div class="bloco-titulo">🌓 analogWrite() — "Força do músculo"</div>
+          <p>Controla a <strong>intensidade</strong> de 0 a 255. Igual controlar o quanto de força você coloca num movimento.</p>
+          <pre><span class="fn">analogWrite</span>(<span class="nm">9</span>, <span class="nm">0</span>);    <span class="cm">// LED apagado</span>
+<span class="fn">analogWrite</span>(<span class="nm">9</span>, <span class="nm">128</span>);  <span class="cm">// LED 50% de brilho</span>
+<span class="fn">analogWrite</span>(<span class="nm">9</span>, <span class="nm">255</span>);  <span class="cm">// LED no máximo!</span></pre>
+          <p style="margin-top:8px">⚠️ Só funciona nos pinos com <strong>~</strong> (3, 5, 6, 9, 10, 11)</p>
+        </div>
+
+        <div class="bloco musculos-b">
+          <div class="bloco-titulo">📌 pinMode() — "Treinar o músculo antes"</div>
+          <p>Antes de usar um pino, você precisa dizer se ele vai <strong>enviar</strong> (OUTPUT) ou <strong>receber</strong> (INPUT).</p>
+          <pre><span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">pinMode</span>(<span class="nm">13</span>, OUTPUT);  <span class="cm">// pino 13 = saída (músculo)</span>
+  <span class="fn">pinMode</span>(<span class="nm">2</span>,  INPUT);   <span class="cm">// pino 2  = entrada (sentido)</span>
+}</pre>
+        </div>
+
+        <div style="background:rgba(220,38,38,.1);border-radius:12px;padding:12px 14px;font-size:.82rem;color:#fca5a5;font-weight:600">
+          💡 <strong>Lembre:</strong> digital = liga/desliga &nbsp;|&nbsp; analog = controla a força (0–255)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CORAÇÃO / TEMPO ═══ -->
+  <div class="parte relogio-c" onclick="toggle(this)">
+    <div class="parte-header">
+      <div class="emoji-grande">⏰</div>
+      <div class="parte-titulo-wrap">
+        <div class="parte-corpo-label">No corpo humano</div>
+        <div class="parte-titulo" style="color:#fcd34d">O Coração &amp; Ritmo</div>
+        <div class="parte-subtitulo">Controla o tempo e o ritmo</div>
+      </div>
+      <div class="badge-clique">+ ver</div>
+    </div>
+    <div class="verbos">
+      <span class="verbo-chip relogio-v">⏸️ Pausar / esperar</span>
+      <span class="verbo-chip relogio-v">⏱️ Contar tempo</span>
+      <span class="verbo-chip relogio-v">🔔 Piscar no ritmo</span>
+    </div>
+    <div class="painel">
+      <div class="painel-inner">
+        <div class="painel-titulo" style="color:#fcd34d">⏰ No Arduino: <code>delay()</code> + <code>millis()</code></div>
+
+        <div class="bloco relogio-b">
+          <div class="bloco-titulo">⏸️ delay() — "Segura um segundo!"</div>
+          <p>Para tudo por um tempo (em <strong>milissegundos</strong>). 1000 ms = 1 segundo. Como prender a respiração.</p>
+          <pre><span class="fn">delay</span>(<span class="nm">1000</span>);   <span class="cm">// espera 1 segundo</span>
+<span class="fn">delay</span>(<span class="nm">500</span>);    <span class="cm">// espera meio segundo</span>
+<span class="fn">delay</span>(<span class="nm">100</span>);    <span class="cm">// espera 0,1 segundo</span></pre>
+        </div>
+
+        <div class="bloco relogio-b">
+          <div class="bloco-titulo">⏱️ millis() — "O relógio interno"</div>
+          <p>Retorna <strong>quantos milissegundos</strong> passaram desde que o Arduino ligou. Não trava o programa!</p>
+          <pre><span class="kw">unsigned long</span> agora = <span class="fn">millis</span>();
+<span class="cm">// agora = ex: 3450 (ms desde o início)</span>
+
+<span class="kw">if</span> (agora > <span class="nm">5000</span>) {
+  Serial.<span class="fn">println</span>(<span class="str">"Passaram 5 segundos!"</span>);
+}</pre>
+        </div>
+
+        <div style="background:rgba(217,119,6,.1);border-radius:12px;padding:12px 14px;font-size:.82rem;color:#fcd34d;font-weight:600">
+          💡 <strong>Lembre:</strong> delay() = pausa tudo &nbsp;|&nbsp; millis() = cronômetro que não para o programa
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BOCA / COMUNICAÇÃO ═══ -->
+  <div class="parte boca-c" onclick="toggle(this)">
+    <div class="parte-header">
+      <div class="emoji-grande">🗣️</div>
+      <div class="parte-titulo-wrap">
+        <div class="parte-corpo-label">No corpo humano</div>
+        <div class="parte-titulo" style="color:#6ee7b7">A Boca &amp; Voz</div>
+        <div class="parte-subtitulo">Fala, informa, se comunica</div>
+      </div>
+      <div class="badge-clique">+ ver</div>
+    </div>
+    <div class="verbos">
+      <span class="verbo-chip boca-v">📢 Mostrar valor</span>
+      <span class="verbo-chip boca-v">🐛 Depurar erro</span>
+      <span class="verbo-chip boca-v">💬 Enviar texto</span>
+    </div>
+    <div class="painel">
+      <div class="painel-inner">
+        <div class="painel-titulo" style="color:#6ee7b7">🗣️ No Arduino: <code>Serial.print</code> + <code>Serial.println</code></div>
+
+        <div class="bloco boca-b">
+          <div class="bloco-titulo">📢 Serial.print() — "Falar sem pular linha"</div>
+          <p>Envia texto ou valores para o <strong>Monitor Serial</strong> do computador. Como sussurrar continuamente.</p>
+          <pre>Serial.<span class="fn">print</span>(<span class="str">"Temperatura: "</span>);
+Serial.<span class="fn">print</span>(temperatura);
+Serial.<span class="fn">print</span>(<span class="str">" graus"</span>);</pre>
+        </div>
+
+        <div class="bloco boca-b">
+          <div class="bloco-titulo">📢 Serial.println() — "Falar e pular linha"</div>
+          <p>Igual ao print, mas <strong>pula uma linha</strong> no final. Como terminar uma frase.</p>
+          <pre>Serial.<span class="fn">println</span>(<span class="str">"Arduino ligado!"</span>);
+Serial.<span class="fn">println</span>(valor);       <span class="cm">// imprime número</span>
+Serial.<span class="fn">println</span>();           <span class="cm">// só pula linha</span></pre>
+        </div>
+
+        <div class="bloco boca-b">
+          <div class="bloco-titulo">⚙️ Serial.begin() — "Aprender a falar primeiro"</div>
+          <p>Precisa ficar no <code>setup()</code>. Define a velocidade de comunicação.</p>
+          <pre><span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.<span class="fn">begin</span>(<span class="nm">9600</span>);  <span class="cm">// 9600 baud rate</span>
+}</pre>
+        </div>
+
+        <div style="background:rgba(5,150,105,.1);border-radius:12px;padding:12px 14px;font-size:.82rem;color:#6ee7b7;font-weight:600">
+          💡 <strong>Lembre:</strong> print = continua na mesma linha &nbsp;|&nbsp; println = pula para a próxima linha
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CARD: RECEITA COMPLETA ═══ -->
+  <div class="parte" style="border-color:rgba(251,191,36,.2);grid-column: 1 / -1;" onclick="toggle(this)">
+    <div style="background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(239,68,68,.1));height:4px"></div>
+    <div class="parte-header" style="background:linear-gradient(135deg,rgba(251,191,36,.08),transparent)">
+      <div class="emoji-grande">🍳</div>
+      <div class="parte-titulo-wrap">
+        <div class="parte-corpo-label">Juntando tudo</div>
+        <div class="parte-titulo" style="color:#fcd34d">Receita Completa: Ler → Comparar → Agir → Informar</div>
+        <div class="parte-subtitulo">Um programa que usa TODAS as partes do "corpo"</div>
+      </div>
+      <div class="badge-clique">+ ver</div>
+    </div>
+    <div class="verbos">
+      <span class="verbo-chip cerebro-v">🧠 Cérebro</span>
+      <span class="verbo-chip nervos-v">👁️ Sentidos</span>
+      <span class="verbo-chip musculos-v">💪 Músculos</span>
+      <span class="verbo-chip relogio-v">⏰ Ritmo</span>
+      <span class="verbo-chip boca-v">🗣️ Voz</span>
+    </div>
+    <div class="painel">
+      <div class="painel-inner">
+        <p style="margin-bottom:14px;color:var(--texto2)">Programa completo: <strong>botão pressiona → LED acende → Serial informa</strong></p>
+        <pre><span class="cm">// === PARTES DO "CORPO" ===</span>
+<span class="kw">int</span> pinoBotao = <span class="nm">2</span>;   <span class="cm">// 👁️ sentido (entrada)</span>
+<span class="kw">int</span> pinoLED   = <span class="nm">13</span>;  <span class="cm">// 💪 músculo (saída)</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {              <span class="cm">// 🧠 preparação</span>
+  <span class="fn">pinMode</span>(pinoBotao, INPUT);
+  <span class="fn">pinMode</span>(pinoLED,   OUTPUT);
+  Serial.<span class="fn">begin</span>(<span class="nm">9600</span>);    <span class="cm">// 🗣️ ligar a voz</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {               <span class="cm">// 🔁 repetir sempre</span>
+  <span class="cm">// 👁️ SENTIR: lê o botão</span>
+  <span class="kw">int</span> estado = <span class="fn">digitalRead</span>(pinoBotao);
+
+  <span class="cm">// 🧠 DECIDIR: comparar</span>
+  <span class="kw">if</span> (estado == HIGH) {
+    <span class="fn">digitalWrite</span>(pinoLED, HIGH);       <span class="cm">// 💪 AGIR</span>
+    Serial.<span class="fn">println</span>(<span class="str">"LED aceso!"</span>);     <span class="cm">// 🗣️ FALAR</span>
+  } <span class="kw">else</span> {
+    <span class="fn">digitalWrite</span>(pinoLED, LOW);        <span class="cm">// 💪 AGIR</span>
+    Serial.<span class="fn">println</span>(<span class="str">"LED apagado."</span>);  <span class="cm">// 🗣️ FALAR</span>
+  }
+
+  <span class="fn">delay</span>(<span class="nm">200</span>);                          <span class="cm">// ⏰ RITMO</span>
+}</pre>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px">
+          <div style="background:rgba(124,58,237,.12);border-radius:10px;padding:10px;text-align:center;font-size:.8rem;font-weight:700;color:#c4b5fd">🧠 setup()+loop()<br><span style="opacity:.6;font-weight:400">Cérebro</span></div>
+          <div style="background:rgba(8,145,178,.12);border-radius:10px;padding:10px;text-align:center;font-size:.8rem;font-weight:700;color:#67e8f9">👁️ digitalRead()<br><span style="opacity:.6;font-weight:400">Sentido</span></div>
+          <div style="background:rgba(220,38,38,.12);border-radius:10px;padding:10px;text-align:center;font-size:.8rem;font-weight:700;color:#fca5a5">💪 digitalWrite()<br><span style="opacity:.6;font-weight:400">Músculo</span></div>
+          <div style="background:rgba(217,119,6,.12);border-radius:10px;padding:10px;text-align:center;font-size:.8rem;font-weight:700;color:#fcd34d">⏰ delay()<br><span style="opacity:.6;font-weight:400">Ritmo</span></div>
+          <div style="background:rgba(5,150,105,.12);border-radius:10px;padding:10px;text-align:center;font-size:.8rem;font-weight:700;color:#6ee7b7">🗣️ Serial.println()<br><span style="opacity:.6;font-weight:400">Voz</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid -->
+
+<div class="footer-dica">
+  📟 Cartilha Arduino — 8º e 9º Ano &nbsp;|&nbsp; Clique em cada card para expandir &nbsp;|&nbsp; 🖨️ Use Ctrl+P para imprimir
+</div>
+
+<script>
+function toggle(el) {
+  const painel = el.querySelector('.painel');
+  const badge = el.querySelector('.badge-clique');
+  const aberto = painel.classList.toggle('aberto');
+  badge.textContent = aberto ? '− fechar' : '+ ver';
+}
+</script>
+
+<!-- ESTILOS DE IMPRESSÃO -->
+<style>
+@media print {
+  body { background: white !important; color: #111 !important; font-size: 11pt; }
+  body::before { display: none; }
+  header { padding: 16px 0 8px; }
+  header h1 { font-size: 22pt; color: #111 !important; }
+  header h1 .ard { color: #1d4ed8 !important; }
+  header h1 .corp { color: #6d28d9 !important; }
+  header p { color: #555 !important; }
+  .tag { background: #ede9fe !important; color: #4c1d95 !important; border-color: #a78bfa !important; }
+  .pergunta-central { background: #f5f3ff !important; border-color: #a78bfa !important; color: #111 !important; }
+  .analogia-bar { background: #f8fafc !important; color: #111 !important; display: flex !important; }
+  .an-item .an-ard { color: #1d4ed8 !important; }
+  .grid-corpo { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .parte { break-inside: avoid; background: white !important; border: 1.5px solid #e2e8f0 !important; }
+  .parte.cerebro-c::before  { background: #7c3aed !important; }
+  .parte.nervos-c::before   { background: #0891b2 !important; }
+  .parte.musculos-c::before { background: #dc2626 !important; }
+  .parte.relogio-c::before  { background: #d97706 !important; }
+  .parte.boca-c::before     { background: #059669 !important; }
+  .parte-header { background: #f8fafc !important; }
+  .parte-titulo { color: #111 !important; }
+  .parte-subtitulo, .parte-corpo-label { color: #555 !important; }
+  .verbo-chip { background: #f1f5f9 !important; color: #111 !important; border-color: #cbd5e1 !important; }
+  .badge-clique { display: none; }
+  .painel { max-height: none !important; display: block !important; }
+  .painel-inner { border-top: 1px solid #e2e8f0; }
+  .painel-titulo { color: #111 !important; }
+  .bloco { background: #f8fafc !important; }
+  .bloco p { color: #333 !important; }
+  pre { background: #f1f5f9 !important; color: #111 !important; font-size: 8pt; border: 1px solid #e2e8f0; }
+  .kw { color: #be185d !important; }
+  .fn { color: #0369a1 !important; }
+  .str { color: #15803d !important; }
+  .cm { color: #64748b !important; }
+  .nm { color: #b45309 !important; }
+  code { background: #f1f5f9 !important; color: #111 !important; }
+  .footer-dica { color: #555 !important; border-top: 1px solid #e2e8f0; }
+}
+</style>
+</body>
+</html>
