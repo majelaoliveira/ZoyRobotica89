@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arduino — Cartilha para Programação em C/C++</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:    #00878a;
+  --teal-l:  #00b4b8;
+  --teal-ll: #e0f7f7;
+  --teal-d:  #005f61;
+  --orange:  #e8601c;
+  --orange-l:#ff8c42;
+  --yellow:  #ffd43b;
+  --yellow-d:#c9a800;
+  --green:   #27ae60;
+  --green-l: #2ecc71;
+  --purple:  #8e44ad;
+  --blue:    #2980b9;
+  --blue-l:  #3498db;
+  --red:     #e74c3c;
+  --dark:    #0f1923;
+  --mid:     #1c2b3a;
+  --slate:   #2c3e50;
+  --light:   #f0f6f6;
+  --white:   #ffffff;
+  --ink:     #1a2332;
+  --mono:    'Share Tech Mono', monospace;
+  --fun:     'Boogaloo', cursive;
+  --body:    'Nunito', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--body);
+  background: var(--dark);
+  background-image:
+    radial-gradient(circle at 10% 30%, rgba(0,135,138,.18) 0%, transparent 50%),
+    radial-gradient(circle at 90% 70%, rgba(232,96,28,.1) 0%, transparent 45%);
+  min-height: 100vh;
+  padding: 30px 16px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image: radial-gradient(circle, rgba(0,180,184,.15) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events:none; z-index:0;
+}
+
+.wrapper { max-width:860px; width:100%; position:relative; z-index:1; }
+
+/* ── CARD ── */
+.card {
+  background: var(--white);
+  border-radius: 18px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,.38), 0 2px 8px rgba(0,0,0,.2);
+  animation: cardIn .5s ease both;
+}
+@keyframes cardIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+.card:nth-child(1){animation-delay:.04s}.card:nth-child(2){animation-delay:.08s}
+.card:nth-child(3){animation-delay:.12s}.card:nth-child(4){animation-delay:.16s}
+.card:nth-child(5){animation-delay:.20s}.card:nth-child(6){animation-delay:.24s}
+.card:nth-child(7){animation-delay:.28s}.card:nth-child(8){animation-delay:.32s}
+.card:nth-child(9){animation-delay:.36s}.card:nth-child(10){animation-delay:.40s}
+.card:nth-child(11){animation-delay:.44s}.card:nth-child(12){animation-delay:.48s}
+.card:nth-child(13){animation-delay:.52s}.card:nth-child(14){animation-delay:.56s}
+.card:nth-child(15){animation-delay:.60s}.card:nth-child(16){animation-delay:.64s}
+.card:nth-child(17){animation-delay:.68s}.card:nth-child(18){animation-delay:.72s}
+
+/* ── CAPA ── */
+.capa {
+  background: linear-gradient(145deg, #0f1923 0%, #1c2b3a 55%, #0d2530 100%);
+  color: var(--white);
+  padding: 52px 40px 44px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.capa-glow-a { position:absolute; top:-70px; right:-60px; width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(0,180,184,.22) 0%,transparent 70%); pointer-events:none; }
+.capa-glow-b { position:absolute; bottom:-80px; left:-50px; width:260px; height:260px; border-radius:50%; background:radial-gradient(circle,rgba(232,96,28,.18) 0%,transparent 70%); pointer-events:none; }
+
+.badge { display:inline-block; background:var(--teal); color:#fff; font-family:var(--fun); font-size:.85rem; letter-spacing:.12em; padding:4px 16px; border-radius:20px; margin-bottom:18px; position:relative; z-index:1; }
+
+.capa-titulo { font-family:var(--fun); font-size:4rem; line-height:1; margin-bottom:4px; position:relative; z-index:1; letter-spacing:.02em; }
+.capa-titulo .ard { color:var(--teal-l); }
+.capa-titulo .uin { color:var(--orange-l); }
+
+.capa-sub { font-size:1.08rem; color:rgba(255,255,255,.72); font-weight:600; margin-bottom:8px; position:relative; z-index:1; }
+.capa-autor { font-size:.85rem; color:rgba(255,255,255,.45); font-style:italic; margin-bottom:22px; position:relative; z-index:1; }
+
+.capa-tags { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:16px; position:relative; z-index:1; }
+.tag { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); color:rgba(255,255,255,.88); font-size:.78rem; font-weight:700; padding:4px 12px; border-radius:20px; font-family:var(--fun); }
+.tag.t { background:rgba(0,180,184,.22); border-color:var(--teal-l); color:var(--teal-l); }
+.tag.o { background:rgba(232,96,28,.18); border-color:var(--orange-l); color:var(--orange-l); }
+.tag.y { background:rgba(255,212,59,.15); border-color:var(--yellow); color:var(--yellow); }
+
+/* ── SEC HEADER ── */
+.sec-header { display:flex; align-items:center; }
+.sec-num { font-family:var(--fun); font-size:.95rem; color:#fff; padding:10px 18px; letter-spacing:.05em; white-space:nowrap; min-width:136px; text-align:center; }
+.sec-title { font-family:var(--fun); font-size:1.5rem; color:#fff; padding:10px 20px; flex:1; letter-spacing:.02em; }
+
+/* temas */
+.th-teal   .sec-num{background:var(--teal)}.th-teal   .sec-title{background:var(--teal-d)}
+.th-orange .sec-num{background:var(--orange)}.th-orange .sec-title{background:#b74a10}
+.th-green  .sec-num{background:var(--green)}.th-green  .sec-title{background:#1e7a48}
+.th-purple .sec-num{background:var(--purple)}.th-purple .sec-title{background:#6c3483}
+.th-blue   .sec-num{background:var(--blue)}.th-blue   .sec-title{background:#1f6494}
+.th-red    .sec-num{background:var(--red)}.th-red    .sec-title{background:#b03228}
+.th-yellow .sec-num{background:var(--yellow-d);color:#1a1208}.th-yellow .sec-title{background:#a87800}
+.th-slate  .sec-num{background:var(--slate)}.th-slate  .sec-title{background:#1a252f}
+.th-dark   .sec-num{background:var(--dark)}.th-dark   .sec-title{background:var(--mid)}
+
+/* ── BODY ── */
+.sec-body { padding:26px 30px 28px; }
+
+p.txt { font-size:1rem; line-height:1.78; color:var(--ink); margin-bottom:14px; }
+p.txt strong { color:var(--teal); font-weight:800; }
+p.txt em { color:var(--orange); font-style:normal; font-weight:700; }
+p.txt .kw { color:var(--purple); font-family:var(--mono); font-size:.88em; background:#f5eeff; padding:1px 5px; border-radius:4px; }
+
+/* ── CALLOUTS ── */
+.callout { border-radius:12px; padding:14px 18px; margin:14px 0; display:flex; gap:12px; align-items:flex-start; }
+.callout .icon { font-size:1.7rem; flex-shrink:0; line-height:1; margin-top:2px; }
+.callout .content { flex:1; }
+.callout .content strong { display:block; font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; margin-bottom:3px; }
+.callout .content p { font-size:.92rem; line-height:1.62; margin:0; }
+.callout .content p code { font-family:var(--mono); font-size:.86em; background:rgba(0,0,0,.07); padding:1px 5px; border-radius:3px; }
+
+.callout.info   { background:#e5f4fd; border-left:4px solid var(--blue); }
+.callout.info   .content strong { color:var(--blue); }
+.callout.warn   { background:#fffbe6; border-left:4px solid var(--yellow-d); }
+.callout.warn   .content strong { color:var(--yellow-d); }
+.callout.tip    { background:#eafaf1; border-left:4px solid var(--green); }
+.callout.tip    .content strong { color:#1e7a48; }
+.callout.danger { background:#fdf0f0; border-left:4px solid var(--red); }
+.callout.danger .content strong { color:var(--red); }
+.callout.fun    { background:#f5eeff; border-left:4px solid var(--purple); }
+.callout.fun    .content strong { color:var(--purple); }
+.callout.teal   { background:var(--teal-ll); border-left:4px solid var(--teal); }
+.callout.teal   .content strong { color:var(--teal-d); }
+
+/* ── CODE BLOCK ── */
+.code-wrap { background:#0d1b2a; border-radius:12px; margin:16px 0; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.22); }
+.code-label { background:#162534; padding:7px 16px; font-family:var(--fun); font-size:.78rem; color:var(--teal-l); letter-spacing:.1em; display:flex; align-items:center; gap:8px; }
+.code-label::before { content:''; width:10px; height:10px; border-radius:50%; background:var(--red); box-shadow:16px 0 0 var(--yellow-d), 32px 0 0 var(--green); flex-shrink:0; }
+.code-label span { margin-left:20px; }
+pre.code { font-family:var(--mono); font-size:.87rem; line-height:1.78; padding:16px 20px; color:#cdd6f4; overflow-x:auto; white-space:pre; }
+
+/* syntax */
+.c  { color:#6c7a89; font-style:italic; }
+.kw { color:#89b4fa; }
+.ty { color:#cba6f7; }
+.st { color:#a6e3a1; }
+.nm { color:#fab387; }
+.fn { color:#89dceb; }
+.pp { color:#f5c2e7; }
+.op { color:#f38ba8; }
+
+/* ── CHIP GRID ── */
+.chip-grid { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+.chip { border-radius:10px; padding:9px 14px; font-family:var(--mono); font-size:.86rem; font-weight:bold; text-align:center; min-width:80px; display:flex; flex-direction:column; align-items:center; gap:3px; border:2px solid transparent; transition:transform .15s; cursor:default; }
+.chip:hover { transform:translateY(-3px); }
+.chip small { font-family:var(--body); font-size:.66rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; opacity:.8; }
+.chip.teal   { background:var(--teal-ll); color:#004f51; border-color:var(--teal); }
+.chip.orange { background:#fff0e8; color:#8a2d00; border-color:var(--orange); }
+.chip.purple { background:#f5eeff; color:#5a2580; border-color:var(--purple); }
+.chip.blue   { background:#e5f0fa; color:#154e7a; border-color:var(--blue); }
+.chip.green  { background:#eafaf1; color:#155a30; border-color:var(--green); }
+.chip.yellow { background:#fffbe6; color:#7a5c00; border-color:var(--yellow-d); }
+.chip.red    { background:#fdf0f0; color:#8a1a1a; border-color:var(--red); }
+.chip.slate  { background:#eaecf0; color:#2c3e50; border-color:#95a5a6; }
+
+/* ── ANALOGY CARD ── */
+.analogy { display:flex; align-items:stretch; margin:14px 0; background:var(--light); border-radius:12px; overflow:hidden; }
+.analogy .a-real { background:var(--teal); color:#fff; padding:14px 15px; font-size:.76rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; writing-mode:vertical-rl; text-orientation:mixed; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.analogy .a-content { padding:14px 18px; flex:1; }
+.analogy .a-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; font-size:.89rem; }
+.analogy .a-row:last-child { margin-bottom:0; }
+.analogy .a-label { font-weight:800; min-width:110px; color:var(--teal); font-family:var(--mono); font-size:.82rem; flex-shrink:0; }
+.analogy .a-arrow { color:#bbb; flex-shrink:0; margin-top:2px; }
+.analogy .a-val { color:var(--ink); font-size:.9rem; line-height:1.5; }
+
+/* ── FUNCTION TABLE ── */
+.fn-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:.88rem; }
+.fn-table th { background:var(--slate); color:#fff; font-family:var(--fun); font-size:.82rem; letter-spacing:.08em; padding:10px 14px; text-align:left; }
+.fn-table th:first-child { border-radius:8px 0 0 0; }
+.fn-table th:last-child { border-radius:0 8px 0 0; }
+.fn-table td { padding:12px 14px; border-bottom:1px solid #e8edf2; vertical-align:top; line-height:1.55; }
+.fn-table tr:last-child td { border-bottom:none; }
+.fn-table tr:nth-child(even) td { background:#f8fafb; }
+.fn-table td:first-child { font-family:var(--mono); font-size:.85rem; color:var(--teal-d); font-weight:bold; white-space:nowrap; }
+.fn-table td:nth-child(2) code { font-family:var(--mono); font-size:.82rem; color:#1a3a52; background:#e5f4fd; padding:2px 6px; border-radius:4px; display:inline-block; margin-bottom:4px; }
+.fn-table td:last-child { font-size:.82rem; color:#555; }
+
+/* ── FLOWCHART ── */
+.flow-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+.flow-box { background:var(--light); border-radius:12px; padding:14px; text-align:center; }
+.flow-box h4 { font-family:var(--fun); font-size:1rem; color:var(--teal-d); margin-bottom:10px; letter-spacing:.04em; }
+.flow-svg { display:block; margin:0 auto; }
+
+/* ── DIVIDER ── */
+.div-line { display:flex; align-items:center; gap:12px; margin:20px 0 16px; }
+.div-line::before,.div-line::after { content:''; flex:1; height:2px; background:linear-gradient(90deg,transparent,#cde8ea); }
+.div-line::after { background:linear-gradient(90deg,#cde8ea,transparent); }
+.div-line span { font-family:var(--fun); font-size:.73rem; letter-spacing:.12em; color:#95a5a6; text-transform:uppercase; white-space:nowrap; }
+
+/* ── CHALLENGE ── */
+.challenge { background:linear-gradient(135deg,#0f1923,#1c2b3a); border-radius:14px; padding:20px 22px; margin:18px 0; color:#fff; position:relative; overflow:hidden; }
+.challenge::before { content:'⚡'; position:absolute; top:-10px; right:10px; font-size:5rem; opacity:.07; }
+.challenge .ch-title { font-family:var(--fun); font-size:1.05rem; color:var(--yellow); letter-spacing:.05em; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.challenge p { font-size:.92rem; line-height:1.62; color:rgba(255,255,255,.88); }
+.challenge p strong { color:var(--teal-l); }
+.challenge p code { font-family:var(--mono); font-size:.85em; background:rgba(255,255,255,.12); padding:1px 5px; border-radius:3px; }
+
+/* ── INDEX ── */
+.index-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+.index-item { display:flex; align-items:center; gap:12px; background:var(--light); border-radius:10px; padding:11px 14px; transition:transform .15s, box-shadow .15s; }
+.index-item:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.1); }
+.index-num { font-family:var(--fun); font-size:1.25rem; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff; }
+.index-text strong { display:block; font-size:.86rem; font-weight:800; color:var(--ink); line-height:1.2; }
+.index-text small { font-size:.7rem; color:#7f8c8d; font-weight:600; }
+
+/* ── PART BANNER ── */
+.part-banner { background:linear-gradient(135deg,var(--teal-d),var(--teal)); color:#fff; padding:18px 28px; display:flex; align-items:center; gap:16px; }
+.part-banner .pb-icon { font-size:2.4rem; flex-shrink:0; }
+.part-banner .pb-text strong { font-family:var(--fun); font-size:1.4rem; letter-spacing:.03em; display:block; }
+.part-banner .pb-text span { font-size:.88rem; opacity:.82; }
+
+/* ── PIN MAP ── */
+.pin-map { background:var(--light); border-radius:12px; padding:18px; margin:16px 0; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.pin-group { background:#fff; border-radius:10px; padding:14px; border-left:4px solid var(--teal); }
+.pin-group h4 { font-family:var(--fun); font-size:.95rem; color:var(--teal-d); margin-bottom:8px; }
+.pin-group ul { list-style:none; }
+.pin-group ul li { font-family:var(--mono); font-size:.8rem; color:var(--ink); padding:3px 0; border-bottom:1px dashed #e0eaeb; display:flex; align-items:center; gap:6px; }
+.pin-group ul li:last-child { border-bottom:none; }
+.pin-group ul li::before { content:'▸'; color:var(--teal); font-size:.7rem; }
+.pin-group.orange { border-left-color:var(--orange); }
+.pin-group.orange h4 { color:#8a2d00; }
+.pin-group.orange ul li::before { color:var(--orange); }
+.pin-group.yellow { border-left-color:var(--yellow-d); }
+.pin-group.yellow h4 { color:var(--yellow-d); }
+.pin-group.yellow ul li::before { color:var(--yellow-d); }
+.pin-group.blue { border-left-color:var(--blue); }
+.pin-group.blue h4 { color:#154e7a; }
+.pin-group.blue ul li::before { color:var(--blue); }
+
+/* ── FOOTER ── */
+.lesson-footer { display:flex; justify-content:space-between; align-items:center; padding:11px 20px; background:var(--light); border-top:1px solid #d5e8ea; font-size:.76rem; font-weight:700; color:#95a5a6; letter-spacing:.05em; font-family:var(--fun); }
+.dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; box-shadow:0 0 6px currentColor; }
+
+@media(max-width:620px){
+  .sec-body{padding:18px 16px}
+  .capa{padding:38px 18px 30px}
+  .capa-titulo{font-size:2.8rem}
+  .index-grid{grid-template-columns:1fr}
+  .flow-grid{grid-template-columns:1fr}
+  .pin-map{grid-template-columns:1fr}
+  .sec-num{min-width:100px;font-size:.82rem;padding:10px 10px}
+  .sec-title{font-size:1.18rem;padding:10px 12px}
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- ══ CAPA ══ -->
+<div class="card">
+<div class="capa">
+  <div class="capa-glow-a"></div><div class="capa-glow-b"></div>
+  <div class="badge">📚 Cartilha de Programação — Edição 2.0</div>
+  <div class="capa-titulo"><span class="ard">ARD</span><span class="uin">UINO</span></div>
+  <div class="capa-sub">Cartilha para Programação em C/C++</div>
+  <div class="capa-autor">Baseada na obra de João Alexandre da Silveira — Revista do Arduino</div>
+
+  <svg width="240" height="100" viewBox="0 0 240 100" style="display:block;margin:12px auto;position:relative;z-index:1">
+    <!-- Board -->
+    <rect x="8" y="10" width="224" height="78" rx="7" fill="#00878a"/>
+    <rect x="8" y="10" width="224" height="78" rx="7" fill="none" stroke="#005f61" stroke-width="2"/>
+    <!-- Chip -->
+    <rect x="88" y="28" width="58" height="42" rx="4" fill="#1a2332"/><rect x="93" y="33" width="48" height="32" rx="2" fill="#253545"/>
+    <text x="117" y="52" text-anchor="middle" fill="#00b4b8" font-family="monospace" font-size="6.5">ATmega</text>
+    <text x="117" y="61" text-anchor="middle" fill="#00b4b8" font-family="monospace" font-size="6.5">328P</text>
+    <!-- LED -->
+    <circle cx="178" cy="36" r="6" fill="#e8601c"/><circle cx="178" cy="36" r="4" fill="#ff8c42"/>
+    <circle cx="176" cy="34" r="1.5" fill="rgba(255,255,255,.6)"/>
+    <text x="178" y="50" text-anchor="middle" fill="rgba(255,255,255,.6)" font-family="sans-serif" font-size="5.5">LED 13</text>
+    <!-- USB -->
+    <rect x="10" y="36" width="17" height="26" rx="3" fill="#555"/><rect x="13" y="39" width="11" height="20" rx="2" fill="#333"/>
+    <!-- Digital pins top -->
+    <rect x="48" y="5" width="5" height="9" rx="1" fill="#c0c0c0"/>
+    <rect x="58" y="5" width="5" height="9" rx="1" fill="#c0c0c0"/>
+    <rect x="68" y="5" width="5" height="9" rx="1" fill="#c0c0c0"/>
+    <rect x="152" y="5" width="5" height="9" rx="1" fill="#c0c0c0"/>
+    <rect x="162" y="5" width="5" height="9" rx="1" fill="#c0c0c0"/>
+    <rect x="172" y="5" width="5" height="9" rx="1" fill="#c0c0c0"/>
+    <rect x="182" y="5" width="5" height="9" rx="1" fill="#c0c0c0"/>
+    <rect x="192" y="5" width="5" height="9" rx="1" fill="#c0c0c0"/>
+    <rect x="202" y="5" width="5" height="9" rx="1" fill="#c0c0c0"/>
+    <!-- Analog pins bottom -->
+    <rect x="120" y="86" width="5" height="9" rx="1" fill="#ffd43b"/>
+    <rect x="130" y="86" width="5" height="9" rx="1" fill="#ffd43b"/>
+    <rect x="140" y="86" width="5" height="9" rx="1" fill="#ffd43b"/>
+    <rect x="150" y="86" width="5" height="9" rx="1" fill="#ffd43b"/>
+    <rect x="160" y="86" width="5" height="9" rx="1" fill="#ffd43b"/>
+    <rect x="170" y="86" width="5" height="9" rx="1" fill="#ffd43b"/>
+    <!-- Power pins -->
+    <rect x="48" y="86" width="5" height="9" rx="1" fill="#e74c3c"/>
+    <rect x="58" y="86" width="5" height="9" rx="1" fill="#e74c3c"/>
+    <rect x="68" y="86" width="5" height="9" rx="1" fill="#e74c3c"/>
+    <!-- Traces -->
+    <path d="M168 65 Q205 65 205 36" stroke="#005060" stroke-width="1.5" fill="none"/>
+  </svg>
+
+  <div class="capa-tags">
+    <span class="tag t">⚡ Arduino UNO / Nano</span>
+    <span class="tag o">🔌 C / C++</span>
+    <span class="tag y">📡 Comunicação Serial</span>
+    <span class="tag t">🔢 Pinos Digitais e Analógicos</span>
+    <span class="tag o">🔄 Controle de Fluxo</span>
+  </div>
+</div>
+</div>
+
+<!-- ══ ÍNDICE ══ -->
+<div class="card th-slate">
+  <div class="sec-header"><div class="sec-num">📋 Índice</div><div class="sec-title">Conteúdo da Cartilha</div></div>
+  <div class="sec-body">
+    <div class="index-grid">
+      <div class="index-item"><div class="index-num" style="background:var(--teal)">A</div><div class="index-text"><strong>Estrutura da Linguagem</strong><small>setup(), loop(), símbolos</small></div></div>
+      <div class="index-item"><div class="index-num" style="background:var(--orange)">A.1</div><div class="index-text"><strong>Constantes e Variáveis</strong><small>TRUE/FALSE, HIGH/LOW, tipos</small></div></div>
+      <div class="index-item"><div class="index-num" style="background:var(--purple)">A.2</div><div class="index-text"><strong>Matrizes (Arrays)</strong><small>Declaração, leitura e escrita</small></div></div>
+      <div class="index-item"><div class="index-num" style="background:var(--blue)">A.3</div><div class="index-text"><strong>Lógica e Aritmética</strong><small>Operadores e comparações</small></div></div>
+      <div class="index-item"><div class="index-num" style="background:var(--green)">A.4</div><div class="index-text"><strong>Funções de Tempo e Matemática</strong><small>delay, millis, map, random</small></div></div>
+      <div class="index-item"><div class="index-num" style="background:var(--red)">A.5</div><div class="index-text"><strong>Controle de Fluxo</strong><small>if, while, for, switch, ternário</small></div></div>
+      <div class="index-item"><div class="index-num" style="background:var(--teal)">B.1</div><div class="index-text"><strong>Pinos Digitais</strong><small>pinMode, digitalRead/Write</small></div></div>
+      <div class="index-item"><div class="index-num" style="background:var(--yellow-d)">B.2</div><div class="index-text"><strong>Pinos Analógicos</strong><small>analogRead, analogWrite, PWM</small></div></div>
+      <div class="index-item"><div class="index-num" style="background:var(--blue)">B.3</div><div class="index-text"><strong>Porta Serial</strong><small>Serial.begin, print, read</small></div></div>
+      <div class="index-item"><div class="index-num" style="background:var(--red)">B.4</div><div class="index-text"><strong>Pinos de Alimentação</strong><small>3.3V, 5V, Vin, GND, RESET</small></div></div>
+    </div>
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--green)">●</span>Arduino Pronto</span><span>Cartilha Arduino C/C++ — Ed. 2.0</span></div>
+</div>
+
+<!-- ══ PARTE A BANNER ══ -->
+<div class="card">
+  <div class="part-banner">
+    <div class="pb-icon">💻</div>
+    <div class="pb-text"><strong>Parte A — A Linguagem do Arduino</strong><span>Estrutura, variáveis, operadores e controle de fluxo em C/C++</span></div>
+  </div>
+</div>
+
+<!-- ══ LIÇÃO A — ESTRUTURA ══ -->
+<div class="card th-teal">
+  <div class="sec-header"><div class="sec-num">⚙️ Lição A</div><div class="sec-title">A Estrutura da Linguagem</div></div>
+  <div class="sec-body">
+
+    <p class="txt">A estrutura básica do Arduino é formada por <strong>dois blocos obrigatórios</strong> que carregam outras funções escritas em C/C++. Sem eles, nenhum programa funciona!</p>
+
+    <div class="analogy">
+      <div class="a-real">Os dois blocos</div>
+      <div class="a-content">
+        <div class="a-row"><span class="a-label">setup()</span><span class="a-arrow">→</span><span class="a-val">Roda <strong>UMA ÚNICA VEZ</strong> ao ligar. Configura pinos e inicia a serial. É a função de preparação.</span></div>
+        <div class="a-row"><span class="a-label">loop()</span><span class="a-arrow">→</span><span class="a-val">Roda <strong>PARA SEMPRE</strong>, repetidamente. Lê entradas e controla saídas. É o coração do programa.</span></div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>estrutura_basica.ino — o esqueleto de todo programa Arduino</span></div>
+<pre class="code"><span class="c">/*
+  Exemplo: setup() abre a serial; loop() transmite
+  "Hello World!" a cada 2 segundos.
+*/</span>
+
+<span class="ty">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="nm">9600</span>); <span class="c">// inicia porta serial em 9600 bps</span>
+}
+
+<span class="ty">void</span> <span class="fn">loop</span>() {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="st">"Hello World!"</span>); <span class="c">// transmite frase</span>
+  <span class="fn">delay</span>(<span class="nm">2000</span>);                      <span class="c">// pausa 2 segundos</span>
+}</pre>
+    </div>
+
+    <div class="div-line"><span>os 4 símbolos essenciais</span></div>
+
+    <div class="chip-grid">
+      <div class="chip teal"><span>{ }</span><small>bloco de código</small></div>
+      <div class="chip orange"><span>;</span><small>fim de instrução</small></div>
+      <div class="chip purple"><span>//</span><small>comentário 1 linha</small></div>
+      <div class="chip blue"><span>/*...*/</span><small>comentário multi-linha</small></div>
+    </div>
+
+    <div class="callout info">
+      <div class="icon">📌</div>
+      <div class="content"><strong>Funções</strong><p>Em C, funções são blocos reutilizáveis com um <strong>tipo de retorno</strong>, um <strong>nome</strong> e <strong>parâmetros</strong> entre parênteses. O tipo <code>void</code> significa que a função não retorna nenhum valor.</p></div>
+    </div>
+
+    <div class="callout warn">
+      <div class="icon">⚠️</div>
+      <div class="content"><strong>Declaração obrigatória</strong><p>Toda função criada pelo programador deve ser <strong>declarada antes de ser chamada</strong>. Você pode declarar apenas o cabeçalho no início e escrever o corpo depois do <code>loop()</code>.</p></div>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--teal-l)">●</span>Lição A</span><span>Estrutura da Linguagem</span></div>
+</div>
+
+<!-- ══ LIÇÃO A.1 ══ -->
+<div class="card th-orange">
+  <div class="sec-header"><div class="sec-num">🔤 Lição A.1</div><div class="sec-title">Constantes e Variáveis</div></div>
+  <div class="sec-body">
+
+    <p class="txt"><strong>Constantes</strong> são valores fixos que nunca mudam. No Arduino há 3 grupos, e cada par pode ser representado por 1 e 0 em binário:</p>
+
+    <div class="chip-grid">
+      <div class="chip green"><span>TRUE / FALSE</span><small>estados lógicos</small></div>
+      <div class="chip orange"><span>HIGH / LOW</span><small>tensão nos pinos</small></div>
+      <div class="chip blue"><span>INPUT / OUTPUT</span><small>direção dos pinos</small></div>
+    </div>
+
+    <div class="callout teal">
+      <div class="icon">💡</div>
+      <div class="content"><strong>Como lembrar</strong><p><strong>HIGH</strong> = 5 volts no pino digital. <strong>LOW</strong> = 0 volt (terra). <strong>TRUE</strong> = qualquer valor diferente de zero. <strong>FALSE</strong> = sempre zero.</p></div>
+    </div>
+
+    <div class="div-line"><span>tipos de variáveis</span></div>
+
+    <div class="chip-grid">
+      <div class="chip teal"><span>byte</span><small>0 a 255 (8 bits)</small></div>
+      <div class="chip orange"><span>int</span><small>inteiro 16 bits</small></div>
+      <div class="chip purple"><span>long</span><small>inteiro 32 bits</small></div>
+      <div class="chip blue"><span>float</span><small>decimal 32 bits</small></div>
+      <div class="chip green"><span>boolean</span><small>true / false</small></div>
+      <div class="chip yellow"><span>char</span><small>um caractere</small></div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>variaveis_escopo.ino — global vs. local</span></div>
+<pre class="code"><span class="ty">int</span> i = <span class="nm">0</span>;          <span class="c">// variável GLOBAL — visível em todo o programa</span>
+<span class="ty">void</span> <span class="fn">ledOn</span>();        <span class="c">// declaração prévia da função criada</span>
+
+<span class="ty">void</span> <span class="fn">setup</span>() {
+  <span class="fn">pinMode</span>(<span class="nm">10</span>, OUTPUT);
+}
+
+<span class="ty">void</span> <span class="fn">loop</span>() {
+  <span class="kw">for</span> (i=<span class="nm">0</span>; i <= <span class="nm">255</span>; i++) <span class="fn">ledOn</span>();  <span class="c">// aumenta brilho</span>
+  <span class="kw">for</span> (i=<span class="nm">255</span>; i >= <span class="nm">0</span>; i--) <span class="fn">ledOn</span>();  <span class="c">// diminui brilho</span>
+}
+
+<span class="ty">void</span> <span class="fn">ledOn</span>() {           <span class="c">// usa 'i' que é global</span>
+  <span class="fn">analogWrite</span>(<span class="nm">10</span>, i);  <span class="c">// brilho proporcional a i</span>
+  <span class="fn">delay</span>(<span class="nm">10</span>);
+}</pre>
+    </div>
+
+    <div class="callout fun">
+      <div class="icon">🧠</div>
+      <div class="content"><strong>Escopo da variável</strong><p>Declarada <strong>antes do setup()</strong> → é Global (todo o programa a enxerga). Declarada <strong>dentro de uma função</strong> → é Local (só essa função a enxerga). Use globais só quando realmente necessário!</p></div>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--orange-l)">●</span>Lição A.1</span><span>Constantes e Variáveis</span></div>
+</div>
+
+<!-- ══ LIÇÃO A.2 ══ -->
+<div class="card th-purple">
+  <div class="sec-header"><div class="sec-num">📦 Lição A.2</div><div class="sec-title">Matrizes (Arrays)</div></div>
+  <div class="sec-body">
+
+    <p class="txt"><strong>Matrizes</strong> são coleções de variáveis do mesmo tipo armazenadas em posições contíguas de memória. Cada posição é acessada por um <em>índice</em> — e o primeiro índice é sempre <strong>0</strong>!</p>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>matrizes.ino — declaração e acesso</span></div>
+<pre class="code"><span class="c">// Declaração com inicialização dos valores</span>
+<span class="ty">int</span> nomeMatriz[] = { <span class="nm">16</span>, <span class="nm">32</span>, <span class="nm">64</span>, <span class="nm">128</span>, <span class="nm">255</span> };
+
+<span class="c">// Declaração só com tamanho (sem valores iniciais)</span>
+<span class="ty">int</span> notas[<span class="nm">10</span>]; <span class="c">// reserva 10 posições para inteiros</span>
+
+<span class="c">// Escrevendo na 4ª posição (índice 3)</span>
+nomeMatriz[<span class="nm">3</span>] = <span class="nm">200</span>;
+
+<span class="c">// Lendo a 5ª posição (índice 4) e guardando em x</span>
+<span class="ty">int</span> x = nomeMatriz[<span class="nm">4</span>]; <span class="c">// x = 255</span>
+
+<span class="c">// Percorrendo a matriz inteira com for</span>
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="nm">0</span>; i < <span class="nm">5</span>; i++) {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(nomeMatriz[i]);
+}</pre>
+    </div>
+
+    <div class="callout danger">
+      <div class="icon">🚨</div>
+      <div class="content"><strong>Índice começa em ZERO!</strong><p>Uma matriz com 5 elementos tem índices de <code>0</code> a <code>4</code>. Acessar o índice <code>5</code> é um erro que causa comportamento imprevisível no Arduino. Cuidado sempre!</p></div>
+    </div>
+
+    <div class="callout tip">
+      <div class="icon">🎵</div>
+      <div class="content"><strong>Uso prático</strong><p>Matrizes são perfeitas para guardar sequências de notas musicais, padrões de LEDs, leituras de sensores ao longo do tempo, ou comandos em sequência para um servo motor.</p></div>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--purple)">●</span>Lição A.2</span><span>Matrizes (Arrays)</span></div>
+</div>
+
+<!-- ══ LIÇÃO A.3 ══ -->
+<div class="card th-blue">
+  <div class="sec-header"><div class="sec-num">➕ Lição A.3</div><div class="sec-title">Lógica e Aritmética</div></div>
+  <div class="sec-body">
+
+    <p class="txt">O Arduino herda da linguagem C todos os operadores aritméticos e lógicos. Aqui estão os mais usados:</p>
+
+    <div class="div-line"><span>operadores aritméticos e símbolos compostos</span></div>
+    <div class="chip-grid">
+      <div class="chip blue"><span>+ - * /</span><small>aritmética básica</small></div>
+      <div class="chip teal"><span>x++</span><small>x = x + 1</small></div>
+      <div class="chip teal"><span>x--</span><small>x = x - 1</small></div>
+      <div class="chip green"><span>x += y</span><small>x = x + y</small></div>
+      <div class="chip green"><span>x -= y</span><small>x = x - y</small></div>
+      <div class="chip orange"><span>x *= y</span><small>x = x * y</small></div>
+      <div class="chip orange"><span>x /= y</span><small>x = x / y</small></div>
+    </div>
+
+    <div class="div-line"><span>operadores de comparação</span></div>
+    <div class="chip-grid">
+      <div class="chip blue"><span>x == y</span><small>igual a</small></div>
+      <div class="chip red"><span>x != y</span><small>diferente de</small></div>
+      <div class="chip green"><span>x &lt; y</span><small>menor que</small></div>
+      <div class="chip green"><span>x &gt; y</span><small>maior que</small></div>
+      <div class="chip teal"><span>x &lt;= y</span><small>menor/igual</small></div>
+      <div class="chip teal"><span>x &gt;= y</span><small>maior/igual</small></div>
+    </div>
+
+    <div class="div-line"><span>operadores lógicos</span></div>
+    <div class="chip-grid">
+      <div class="chip orange"><span>&amp;&amp;</span><small>AND — porta E</small></div>
+      <div class="chip purple"><span>||</span><small>OR — porta OU</small></div>
+      <div class="chip red"><span>!</span><small>NOT — porta NÃO</small></div>
+    </div>
+
+    <div class="callout danger">
+      <div class="icon">🚨</div>
+      <div class="content"><strong>O erro mais comum!</strong><p><code>=</code> é <strong>atribuição</strong> (guarda um valor). <code>==</code> é <strong>comparação</strong> (pergunta se são iguais). Usar <code>=</code> dentro de um <code>if</code> em vez de <code>==</code> é o erro número 1 dos iniciantes — e o compilador às vezes nem avisa!</p></div>
+    </div>
+
+    <div class="challenge">
+      <div class="ch-title">⚡ Experimento rápido</div>
+      <p>No Monitor Serial, mostre o resultado de: <code>x++</code> 10 vezes, depois <code>x--</code> 10 vezes — e observe o padrão. Depois teste <code>&&</code> e <code>||</code> combinando duas condições ao mesmo tempo.</p>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--blue-l)">●</span>Lição A.3</span><span>Lógica e Aritmética</span></div>
+</div>
+
+<!-- ══ LIÇÃO A.4 ══ -->
+<div class="card th-green">
+  <div class="sec-header"><div class="sec-num">⏱️ Lição A.4</div><div class="sec-title">Funções de Tempo e Matemática</div></div>
+  <div class="sec-body">
+
+    <p class="txt">O Arduino tem funções embutidas para <strong>controlar o tempo</strong>, gerar <strong>números aleatórios</strong> e fazer <strong>conversões de faixas</strong>. São essenciais para praticamente todo projeto!</p>
+
+    <table class="fn-table">
+      <tr>
+        <th>Função</th>
+        <th>Exemplo e Resultado</th>
+        <th>Observações</th>
+      </tr>
+      <tr>
+        <td>delay(ms)</td>
+        <td><code>delay(1000);</code><br>Pausa de 1 segundo exato.</td>
+        <td>Congela TUDO por esse período. Nenhuma outra função roda. Equivale ao HALT do Assembly.</td>
+      </tr>
+      <tr>
+        <td>delayMicroseconds(us)</td>
+        <td><code>delayMicroseconds(500);</code><br>Pausa de 500 microssegundos.</td>
+        <td>Para pausas muito curtas. Mesma limitação do delay().</td>
+      </tr>
+      <tr>
+        <td>millis()</td>
+        <td><code>long t = millis();</code><br>Guarda ms desde o boot.</td>
+        <td>Não congela o programa! Reinicia após ~9 horas de uso contínuo.</td>
+      </tr>
+      <tr>
+        <td>random(min, max)</td>
+        <td><code>int v = random(100,400);</code><br>Número entre 100 e 399.</td>
+        <td>O parâmetro min é opcional (padrão = 0). O max nunca é incluído.</td>
+      </tr>
+      <tr>
+        <td>abs(x)</td>
+        <td><code>float v = abs(-3.14);</code><br>Resultado: 3.14</td>
+        <td>Retorna o valor absoluto (sem sinal).</td>
+      </tr>
+      <tr>
+        <td>map(val,min1,max1,min2,max2)</td>
+        <td><code>int v = map(analogRead(A0), 0,1023, 0,255);</code></td>
+        <td>Converte uma faixa de valores para outra. Pode inverter: map(x,1,100,100,1).</td>
+      </tr>
+    </table>
+
+    <div class="callout tip">
+      <div class="icon">🔥</div>
+      <div class="content"><strong>map() — o canivete suíço</strong><p>A função <code>map()</code> é uma das mais poderosas: converte a leitura analógica (0–1023) para o brilho do LED (0–255), a posição de um sensor para ângulo de servo, temperatura em porcentagem... As possibilidades são infinitas!</p></div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>millis_sem_delay.ino — piscar LED sem travar o programa</span></div>
+<pre class="code"><span class="ty">unsigned long</span> ultimoTempo = <span class="nm">0</span>;
+<span class="ty">int</span> estado = LOW;
+
+<span class="ty">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (<span class="fn">millis</span>() - ultimoTempo >= <span class="nm">500</span>) { <span class="c">// 500ms passaram?</span>
+    ultimoTempo = <span class="fn">millis</span>();
+    estado = (estado == LOW) ? HIGH : LOW;   <span class="c">// inverte</span>
+    <span class="fn">digitalWrite</span>(<span class="nm">13</span>, estado);
+  }
+  <span class="c">// Aqui você pode fazer outras coisas enquanto o LED pisca!</span>
+}</pre>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--green-l)">●</span>Lição A.4</span><span>Funções de Tempo e Matemática</span></div>
+</div>
+
+<!-- ══ LIÇÃO A.5 ══ -->
+<div class="card th-red">
+  <div class="sec-header"><div class="sec-num">🔀 Lição A.5</div><div class="sec-title">Controle de Fluxo</div></div>
+  <div class="sec-body">
+
+    <p class="txt">As estruturas de controle de fluxo, herdadas da linguagem C/C++, determinam <em>quais instruções serão executadas</em> e <em>quantas vezes</em>. São o núcleo da lógica de qualquer programa!</p>
+
+    <div class="div-line"><span>if — if...else — if...else if</span></div>
+
+    <div class="flow-grid">
+      <div class="flow-box">
+        <h4>O comando if</h4>
+        <svg class="flow-svg" width="130" height="140" viewBox="0 0 130 140">
+          <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#555"/></marker></defs>
+          <line x1="65" y1="0" x2="65" y2="18" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+          <polygon points="65,22 100,50 65,78 30,50" fill="#fff3cd" stroke="#ffc107" stroke-width="1.5"/>
+          <text x="65" y="46" text-anchor="middle" font-size="9" font-family="Nunito" font-weight="700" fill="#7a5c00">EXPRESSÃO</text>
+          <text x="65" y="58" text-anchor="middle" font-size="8" font-family="Nunito" fill="#7a5c00">verdadeira?</text>
+          <line x1="65" y1="78" x2="65" y2="95" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+          <text x="70" y="91" font-size="8" font-family="Nunito" fill="#27ae60" font-weight="700">SIM</text>
+          <rect x="30" y="95" width="70" height="26" rx="5" fill="#d5f5e3" stroke="#27ae60" stroke-width="1.5"/>
+          <text x="65" y="112" text-anchor="middle" font-size="8" font-family="Nunito" fill="#1e7a48" font-weight="700">BLOCO</text>
+          <line x1="65" y1="121" x2="65" y2="138" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+          <line x1="100" y1="50" x2="118" y2="50" stroke="#e74c3c" stroke-width="1.5"/>
+          <line x1="118" y1="50" x2="118" y2="130" stroke="#e74c3c" stroke-width="1.5"/>
+          <line x1="118" y1="130" x2="66" y2="130" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+          <text x="108" y="46" font-size="8" font-family="Nunito" fill="#e74c3c" font-weight="700">NÃO</text>
+        </svg>
+      </div>
+      <div class="flow-box">
+        <h4>O comando if...else</h4>
+        <svg class="flow-svg" width="160" height="140" viewBox="0 0 160 140">
+          <defs><marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#555"/></marker></defs>
+          <line x1="80" y1="0" x2="80" y2="18" stroke="#555" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <polygon points="80,22 115,50 80,78 45,50" fill="#fff3cd" stroke="#ffc107" stroke-width="1.5"/>
+          <text x="80" y="47" text-anchor="middle" font-size="9" font-family="Nunito" font-weight="700" fill="#7a5c00">EXPRESSÃO</text>
+          <text x="80" y="58" text-anchor="middle" font-size="8" font-family="Nunito" fill="#7a5c00">verdadeira?</text>
+          <line x1="80" y1="78" x2="80" y2="94" stroke="#27ae60" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <text x="85" y="90" font-size="8" font-family="Nunito" fill="#27ae60" font-weight="700">SIM</text>
+          <rect x="44" y="94" width="72" height="24" rx="5" fill="#d5f5e3" stroke="#27ae60" stroke-width="1.5"/>
+          <text x="80" y="110" text-anchor="middle" font-size="8" font-family="Nunito" fill="#1e7a48" font-weight="700">BLOCO 1</text>
+          <line x1="115" y1="50" x2="135" y2="50" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <text x="118" y="44" font-size="8" font-family="Nunito" fill="#e74c3c" font-weight="700">NÃO</text>
+          <rect x="120" y="94" width="38" height="24" rx="5" fill="#fde8e8" stroke="#e74c3c" stroke-width="1.5"/>
+          <text x="139" y="110" text-anchor="middle" font-size="7.5" font-family="Nunito" fill="#b03228" font-weight="700">ELSE</text>
+          <line x1="135" y1="57" x2="135" y2="94" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <line x1="80" y1="118" x2="80" y2="132" stroke="#555" stroke-width="1.5"/>
+          <line x1="139" y1="118" x2="139" y2="132" stroke="#555" stroke-width="1.5"/>
+          <line x1="80" y1="132" x2="139" y2="132" stroke="#555" stroke-width="1.5"/>
+          <line x1="109" y1="132" x2="109" y2="138" stroke="#555" stroke-width="1.5" marker-end="url(#arr2)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>if_elseif.ino — múltiplas condições encadeadas</span></div>
+<pre class="code"><span class="ty">int</span> temperatura = <span class="nm">35</span>;
+
+<span class="kw">if</span> (temperatura > <span class="nm">40</span>) {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="st">"ALERTA: temperatura crítica!"</span>);
+} <span class="kw">else if</span> (temperatura > <span class="nm">30</span>) {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="st">"Temperatura alta."</span>);
+} <span class="kw">else if</span> (temperatura > <span class="nm">20</span>) {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="st">"Temperatura normal."</span>);
+} <span class="kw">else</span> {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="st">"Temperatura baixa."</span>);
+}</pre>
+    </div>
+
+    <div class="div-line"><span>while — do...while — for</span></div>
+
+    <div class="flow-grid">
+      <div class="flow-box">
+        <h4>while — testa antes</h4>
+        <svg class="flow-svg" width="130" height="150" viewBox="0 0 130 150">
+          <defs><marker id="a3" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#555"/></marker></defs>
+          <line x1="65" y1="0" x2="65" y2="18" stroke="#555" stroke-width="1.5" marker-end="url(#a3)"/>
+          <polygon points="65,22 100,48 65,74 30,48" fill="#fff3cd" stroke="#ffc107" stroke-width="1.5"/>
+          <text x="65" y="44" text-anchor="middle" font-size="8.5" font-family="Nunito" font-weight="700" fill="#7a5c00">EXPRESSÃO</text>
+          <text x="65" y="56" text-anchor="middle" font-size="8" font-family="Nunito" fill="#7a5c00">verdadeira?</text>
+          <line x1="65" y1="74" x2="65" y2="90" stroke="#27ae60" stroke-width="1.5" marker-end="url(#a3)"/>
+          <text x="70" y="87" font-size="8" font-family="Nunito" fill="#27ae60" font-weight="700">SIM</text>
+          <rect x="25" y="90" width="80" height="26" rx="5" fill="#d5f5e3" stroke="#27ae60" stroke-width="1.5"/>
+          <text x="65" y="107" text-anchor="middle" font-size="8" font-family="Nunito" fill="#1e7a48" font-weight="700">BLOCO LOOP</text>
+          <line x1="25" y1="103" x2="8" y2="103" stroke="#2980b9" stroke-width="1.5"/>
+          <line x1="8" y1="103" x2="8" y2="48" stroke="#2980b9" stroke-width="1.5"/>
+          <line x1="8" y1="48" x2="29" y2="48" stroke="#2980b9" stroke-width="1.5" marker-end="url(#a3)"/>
+          <text x="2" y="78" font-size="7" font-family="Nunito" fill="#2980b9" transform="rotate(-90,2,78)">LOOP</text>
+          <line x1="100" y1="48" x2="118" y2="48" stroke="#e74c3c" stroke-width="1.5"/>
+          <line x1="118" y1="48" x2="118" y2="140" stroke="#e74c3c" stroke-width="1.5"/>
+          <line x1="118" y1="140" x2="66" y2="140" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#a3)"/>
+          <text x="108" y="44" font-size="8" font-family="Nunito" fill="#e74c3c" font-weight="700">NÃO</text>
+        </svg>
+      </div>
+      <div class="flow-box">
+        <h4>do...while — executa ao menos 1x</h4>
+        <svg class="flow-svg" width="130" height="150" viewBox="0 0 130 150">
+          <defs><marker id="a4" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#555"/></marker></defs>
+          <line x1="65" y1="0" x2="65" y2="16" stroke="#555" stroke-width="1.5" marker-end="url(#a4)"/>
+          <rect x="25" y="16" width="80" height="26" rx="5" fill="#d5f5e3" stroke="#27ae60" stroke-width="1.5"/>
+          <text x="65" y="33" text-anchor="middle" font-size="8" font-family="Nunito" fill="#1e7a48" font-weight="700">BLOCO LOOP</text>
+          <line x1="65" y1="42" x2="65" y2="58" stroke="#555" stroke-width="1.5" marker-end="url(#a4)"/>
+          <polygon points="65,62 100,88 65,114 30,88" fill="#fff3cd" stroke="#ffc107" stroke-width="1.5"/>
+          <text x="65" y="84" text-anchor="middle" font-size="8.5" font-family="Nunito" font-weight="700" fill="#7a5c00">EXPRESSÃO</text>
+          <text x="65" y="96" text-anchor="middle" font-size="8" font-family="Nunito" fill="#7a5c00">verdadeira?</text>
+          <line x1="30" y1="88" x2="8" y2="88" stroke="#2980b9" stroke-width="1.5"/>
+          <line x1="8" y1="88" x2="8" y2="29" stroke="#2980b9" stroke-width="1.5"/>
+          <line x1="8" y1="29" x2="24" y2="29" stroke="#2980b9" stroke-width="1.5" marker-end="url(#a4)"/>
+          <text x="0" y="62" font-size="7" font-family="Nunito" fill="#2980b9" transform="rotate(-90,0,62)">LOOP</text>
+          <text x="17" y="84" font-size="8" font-family="Nunito" fill="#27ae60" font-weight="700">SIM</text>
+          <line x1="65" y1="114" x2="65" y2="140" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#a4)"/>
+          <text x="70" y="130" font-size="8" font-family="Nunito" fill="#e74c3c" font-weight="700">NÃO</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>for_contador.ino — estrutura completa do for</span></div>
+<pre class="code"><span class="c">// for (variável; condição; incremento)</span>
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="nm">0</span>; i <= <span class="nm">10</span>; i++) {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(i); <span class="c">// imprime 0, 1, 2 ... 10</span>
+  <span class="fn">delay</span>(<span class="nm">1000</span>);
+}
+
+<span class="c">// Também funciona de trás para frente!</span>
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="nm">255</span>; i >= <span class="nm">0</span>; i--) {
+  <span class="fn">analogWrite</span>(<span class="nm">9</span>, i); <span class="c">// LED apagando gradualmente</span>
+  <span class="fn">delay</span>(<span class="nm">8</span>);
+}</pre>
+    </div>
+
+    <div class="div-line"><span>switch...case e operador ternário</span></div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>switch_case.ino — alternativa elegante ao if...else if</span></div>
+<pre class="code"><span class="ty">int</span> modo = <span class="nm">2</span>;
+
+<span class="kw">switch</span> (modo) {
+  <span class="kw">case</span> <span class="nm">1</span>:
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="st">"Modo 1: LED piscando devagar"</span>);
+    <span class="kw">break</span>; <span class="c">// ESSENCIAL! Sem break, cai no próximo case</span>
+  <span class="kw">case</span> <span class="nm">2</span>:
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="st">"Modo 2: LED piscando rápido"</span>);
+    <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="nm">3</span>:
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="st">"Modo 3: LED apagado"</span>);
+    <span class="kw">break</span>;
+  <span class="kw">default</span>:        <span class="c">// se nenhum case for verdadeiro</span>
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="st">"Modo desconhecido!"</span>);
+}
+
+<span class="c">// Operador ternário — if...else em uma linha só:</span>
+<span class="c">// (condição) ? valor_se_verdadeiro : valor_se_falso</span>
+<span class="ty">int</span> x = <span class="nm">8</span>;
+<span class="ty">int</span> y = (x > <span class="nm">10</span>) ? <span class="nm">15</span> : <span class="nm">20</span>; <span class="c">// y = 20 (pois 8 não é > 10)</span></pre>
+    </div>
+
+    <div class="callout warn">
+      <div class="icon">⚠️</div>
+      <div class="content"><strong>Não esqueça o break!</strong><p>No <code>switch...case</code>, cada <code>case</code> precisa terminar com <code>break;</code>. Sem ele, o código "cai" no próximo case e continua executando — comportamento quase sempre indesejado!</p></div>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--red)">●</span>Lição A.5</span><span>Controle de Fluxo</span></div>
+</div>
+
+<!-- ══ PARTE B BANNER ══ -->
+<div class="card">
+  <div class="part-banner" style="background:linear-gradient(135deg,#b74a10,var(--orange))">
+    <div class="pb-icon">🔌</div>
+    <div class="pb-text"><strong>Parte B — Hardware do Arduino</strong><span>Pinos digitais, analógicos, serial e alimentação</span></div>
+  </div>
+</div>
+
+<!-- ══ MAPA DE PINOS ══ -->
+<div class="card th-orange">
+  <div class="sec-header"><div class="sec-num">🗺️ Mapa</div><div class="sec-title">Entradas e Saídas do Arduino</div></div>
+  <div class="sec-body">
+
+    <p class="txt">O Arduino UNO possui <strong>4 grupos de pinos</strong>, cada um com função e comandos específicos em C:</p>
+
+    <div class="pin-map">
+      <div class="pin-group">
+        <h4>⬆️ Pinos Digitais (0–13)</h4>
+        <ul>
+          <li>pinMode()</li>
+          <li>digitalRead()</li>
+          <li>digitalWrite()</li>
+          <li>analogWrite() — pinos PWM ~</li>
+          <li>attachInterrupt()</li>
+          <li>pulseIn()</li>
+        </ul>
+      </div>
+      <div class="pin-group yellow">
+        <h4>〰️ Pinos Analógicos (A0–A5)</h4>
+        <ul>
+          <li>analogRead()</li>
+          <li>Lê 0–5V → valor 0–1023</li>
+          <li>10 bits de resolução</li>
+          <li>Podem virar digitais via pinMode()</li>
+        </ul>
+      </div>
+      <div class="pin-group orange">
+        <h4>📡 Porta Serial (USB)</h4>
+        <ul>
+          <li>Serial.begin()</li>
+          <li>Serial.end()</li>
+          <li>Serial.available()</li>
+          <li>Serial.read()</li>
+          <li>Serial.print()</li>
+          <li>Serial.println()</li>
+        </ul>
+      </div>
+      <div class="pin-group blue">
+        <h4>⚡ Pinos de Alimentação</h4>
+        <ul>
+          <li>3.3V — saída 50mA máx.</li>
+          <li>5V — alimentação principal</li>
+          <li>GND — terra (2 pinos)</li>
+          <li>Vin — entrada 9–15V</li>
+          <li>RESET — reinicia o Arduino</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--orange-l)">●</span>Mapa de Pinos</span><span>Arduino UNO</span></div>
+</div>
+
+<!-- ══ LIÇÃO B.1 ══ -->
+<div class="card th-teal">
+  <div class="sec-header"><div class="sec-num">🔢 Lição B.1</div><div class="sec-title">Os Pinos Digitais</div></div>
+  <div class="sec-body">
+
+    <p class="txt">São <strong>14 pinos</strong> (0 a 13) que operam em dois estados: <em>HIGH</em> (5V) ou <em>LOW</em> (0V). Antes de usar, é preciso configurar a direção com <strong>pinMode()</strong> dentro do setup().</p>
+
+    <div class="callout teal">
+      <div class="icon">🔆</div>
+      <div class="content"><strong>Pinos PWM (~)</strong><p>Os pinos 3, 5, 6, 9, 10 e 11 são marcados com <strong>~</strong> na placa e suportam <code>analogWrite()</code> para simular tensão analógica via PWM (Modulação por Largura de Pulso). Valores de 0 a 255.</p></div>
+    </div>
+
+    <table class="fn-table">
+      <tr><th>Função</th><th>Exemplo e Resultado</th><th>Observações</th></tr>
+      <tr>
+        <td>pinMode(pino, modo)</td>
+        <td><code>pinMode(2, OUTPUT);</code><br>Pino 2 configurado como saída.</td>
+        <td>Sempre no setup(). Use INPUT ou OUTPUT. Existe também INPUT_PULLUP.</td>
+      </tr>
+      <tr>
+        <td>digitalRead(pino)</td>
+        <td><code>int chave = digitalRead(3);</code><br>Guarda HIGH ou LOW em 'chave'.</td>
+        <td>Pino deve estar configurado como INPUT com pinMode().</td>
+      </tr>
+      <tr>
+        <td>digitalWrite(pino, val)</td>
+        <td><code>digitalWrite(2, HIGH);</code><br>Coloca 5V no pino 2.</td>
+        <td>Pino deve ser OUTPUT. Use LOW para colocar 0V.</td>
+      </tr>
+      <tr>
+        <td>analogWrite(pino, val)</td>
+        <td><code>analogWrite(10, 128);</code><br>~2.5V no pino 10 (PWM).</td>
+        <td>Só nos pinos PWM (~). Valor 0–255. Não precisa de pinMode().</td>
+      </tr>
+      <tr>
+        <td>attachInterrupt(pino,fn,modo)</td>
+        <td><code>attachInterrupt(0, contador, RISING);</code></td>
+        <td>Pino 0→digital 2, pino 1→digital 3. Modos: LOW, CHANGE, RISING, FALLING.</td>
+      </tr>
+      <tr>
+        <td>pulseIn(pino, val)</td>
+        <td><code>pulseIn(4, HIGH);</code><br>Mede largura do pulso HIGH no pino 4.</td>
+        <td>Retorna microssegundos. Terceiro parâmetro opcional: timeout em µs.</td>
+      </tr>
+    </table>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>botao_led.ino — LED acende quando botão é pressionado</span></div>
+<pre class="code"><span class="ty">void</span> <span class="fn">setup</span>() {
+  <span class="fn">pinMode</span>(<span class="nm">2</span>, OUTPUT);  <span class="c">// LED no pino 2 como saída</span>
+  <span class="fn">pinMode</span>(<span class="nm">3</span>, INPUT);   <span class="c">// Botão no pino 3 como entrada</span>
+}
+
+<span class="ty">void</span> <span class="fn">loop</span>() {
+  <span class="ty">int</span> chave = <span class="fn">digitalRead</span>(<span class="nm">3</span>); <span class="c">// lê estado do botão</span>
+  <span class="fn">digitalWrite</span>(<span class="nm">2</span>, chave);      <span class="c">// passa estado para o LED</span>
+}
+
+<span class="c">// Versão ultra-compacta (mesma coisa em 1 linha):</span>
+<span class="c">// digitalWrite(2, digitalRead(3));</span></pre>
+    </div>
+
+    <div class="challenge">
+      <div class="ch-title">⚡ Projeto: Semáforo com for</div>
+      <p>Monte 3 LEDs (vermelho=pino 11, amarelo=10, verde=9). Use <strong><code>analogWrite()</code></strong> para fazer um fade: o verde vai de 0 a 255 enquanto o vermelho vai de 255 a 0. Use <code>map()</code> para calcular um a partir do outro!</p>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--teal-l)">●</span>Lição B.1</span><span>Pinos Digitais</span></div>
+</div>
+
+<!-- ══ LIÇÃO B.2 ══ -->
+<div class="card th-yellow">
+  <div class="sec-header"><div class="sec-num">〰️ Lição B.2</div><div class="sec-title">Os Pinos Analógicos</div></div>
+  <div class="sec-body">
+
+    <p class="txt">São <strong>6 pinos</strong> (A0 a A5) dedicados à leitura de sinais analógicos — tensões que variam continuamente entre 0 e 5V. O conversor A/D de <em>10 bits</em> transforma essa tensão em um número de 0 a 1023.</p>
+
+    <div class="analogy">
+      <div class="a-real">Na prática</div>
+      <div class="a-content">
+        <div class="a-row"><span class="a-label">0V no pino</span><span class="a-arrow">→</span><span class="a-val">analogRead() retorna <strong>0</strong></span></div>
+        <div class="a-row"><span class="a-label">2.5V no pino</span><span class="a-arrow">→</span><span class="a-val">analogRead() retorna <strong>512</strong></span></div>
+        <div class="a-row"><span class="a-label">5V no pino</span><span class="a-arrow">→</span><span class="a-val">analogRead() retorna <strong>1023</strong></span></div>
+        <div class="a-row"><span class="a-label">Qualquer tensão</span><span class="a-arrow">→</span><span class="a-val">valor = (tensão / 5.0) × 1023</span></div>
+      </div>
+    </div>
+
+    <table class="fn-table">
+      <tr><th>Função</th><th>Exemplo e Resultado</th><th>Observações</th></tr>
+      <tr>
+        <td>analogRead(pino)</td>
+        <td><code>int sensor = analogRead(A0);</code><br>Guarda 0–1023 em 'sensor'.</td>
+        <td>Não precisa de pinMode()! Os pinos A0–A5 equivalem também a 14–19.</td>
+      </tr>
+    </table>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>sensor_brilho.ino — potenciômetro controla brilho do LED</span></div>
+<pre class="code"><span class="ty">void</span> <span class="fn">setup</span>() { }  <span class="c">// sem configuração necessária!</span>
+
+<span class="ty">void</span> <span class="fn">loop</span>() {
+  <span class="c">// Lê A5 (0–1023) e divide por 4 para ter 0–255</span>
+  <span class="fn">analogWrite</span>(<span class="nm">10</span>, <span class="fn">analogRead</span>(A5) / <span class="nm">4</span>);
+
+  <span class="c">// Alternativa mais legível com map():</span>
+  <span class="c">// int leitura = analogRead(A5);</span>
+  <span class="c">// int brilho = map(leitura, 0, 1023, 0, 255);</span>
+  <span class="c">// analogWrite(10, brilho);</span>
+}</pre>
+    </div>
+
+    <div class="callout info">
+      <div class="icon">🔄</div>
+      <div class="content"><strong>Pinos analógicos como digitais</strong><p>Os pinos A0–A5 podem ser usados como pinos digitais comuns! Basta usar <code>pinMode(14, OUTPUT)</code> — onde 14 corresponde a A0. Isso aumenta o Arduino de 14 para <strong>20 pinos digitais</strong>!</p></div>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--yellow)">●</span>Lição B.2</span><span>Pinos Analógicos</span></div>
+</div>
+
+<!-- ══ LIÇÃO B.3 ══ -->
+<div class="card th-blue">
+  <div class="sec-header"><div class="sec-num">📡 Lição B.3</div><div class="sec-title">A Porta Serial do Arduino</div></div>
+  <div class="sec-body">
+
+    <p class="txt">A porta serial é o <strong>"chat"</strong> entre o Arduino e o computador. Pelo cabo USB, é possível enviar e receber dados em tempo real — visualizados no <em>Monitor Serial</em> da IDE do Arduino (Ctrl+Shift+M).</p>
+
+    <div class="callout warn">
+      <div class="icon">⚠️</div>
+      <div class="content"><strong>Pinos 0 e 1 bloqueados!</strong><p>Quando a porta serial está habilitada com <code>Serial.begin()</code>, os pinos digitais <strong>0 (RX)</strong> e <strong>1 (TX)</strong> ficam ocupados e <strong>não podem</strong> ser usados para outros fins.</p></div>
+    </div>
+
+    <table class="fn-table">
+      <tr><th>Função</th><th>Exemplo e Resultado</th><th>Observações</th></tr>
+      <tr>
+        <td>Serial.begin(taxa)</td>
+        <td><code>Serial.begin(9600);</code><br>Taxa de 9600 bits/segundo.</td>
+        <td>Sempre no setup(). O computador deve usar a mesma taxa no Monitor Serial.</td>
+      </tr>
+      <tr>
+        <td>Serial.end()</td>
+        <td><code>Serial.end();</code></td>
+        <td>Libera os pinos 0 e 1 para uso geral. Também no setup().</td>
+      </tr>
+      <tr>
+        <td>Serial.available()</td>
+        <td><code>int n = Serial.available();</code><br>Nº de bytes no buffer.</td>
+        <td>Retorna 0 se não há dados. Use para verificar antes de ler.</td>
+      </tr>
+      <tr>
+        <td>Serial.read()</td>
+        <td><code>int v = Serial.read();</code><br>Lê 1 byte do buffer.</td>
+        <td>Retorna -1 se não há dados. Consome o byte lido.</td>
+      </tr>
+      <tr>
+        <td>Serial.print(val, fmt)</td>
+        <td><code>Serial.print(3.14159, 3);</code><br>Transmite: 3.142</td>
+        <td>fmt opcional: nº de decimais ou base (BIN, OCT, HEX, DEC).</td>
+      </tr>
+      <tr>
+        <td>Serial.println(val)</td>
+        <td><code>Serial.println("Olá!");</code><br>Transmite com quebra de linha.</td>
+        <td>Igual ao print(), mas acrescenta \r\n no final. Cada chamada fica em uma linha.</td>
+      </tr>
+    </table>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>serial_completo.ino — testando todas as funções seriais</span></div>
+<pre class="code"><span class="ty">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="nm">9600</span>); <span class="c">// abre serial em 9600 bps</span>
+}
+
+<span class="ty">void</span> <span class="fn">loop</span>() {
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="st">"Bytes no buffer: "</span>);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="fn">Serial</span>.<span class="fn">available</span>()); <span class="c">// mostra qtd disponível</span>
+  <span class="fn">delay</span>(<span class="nm">1000</span>);
+
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="st">"Primeiro byte: "</span>);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="fn">Serial</span>.<span class="fn">read</span>());    <span class="c">// -1 se vazio</span>
+  <span class="fn">delay</span>(<span class="nm">1000</span>);
+}
+
+<span class="c">/* Abra o Monitor Serial e digite "ABCDE" + Send.
+   available() mostrará 5 bytes disponíveis.
+   read() mostrará 65 (código ASCII do 'A').
+   Os demais bytes saem em sequência. */</span></pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="icon">🎨</div>
+      <div class="content"><strong>Serial.print() com formatos</strong><p><code>Serial.print('A', BIN)</code> → 01000001 &nbsp;|&nbsp; <code>Serial.print('A', HEX)</code> → 41 &nbsp;|&nbsp; <code>Serial.print('A', DEC)</code> → 65 &nbsp;|&nbsp; <code>Serial.print(3.14159, 2)</code> → 3.14</p></div>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--blue-l)">●</span>Lição B.3</span><span>Porta Serial</span></div>
+</div>
+
+<!-- ══ LIÇÃO B.4 ══ -->
+<div class="card th-red">
+  <div class="sec-header"><div class="sec-num">⚡ Lição B.4</div><div class="sec-title">Os Pinos de Alimentação</div></div>
+  <div class="sec-body">
+
+    <p class="txt">A barra <strong>POWER</strong> fica ao lado dos pinos analógicos e fornece tensões reguladas para alimentar circuitos externos conectados ao Arduino.</p>
+
+    <div class="chip-grid">
+      <div class="chip red"><span>RESET</span><small>força reinício</small></div>
+      <div class="chip orange"><span>3.3V</span><small>saída 50mA máx.</small></div>
+      <div class="chip yellow"><span>5V</span><small>saída regulada</small></div>
+      <div class="chip slate"><span>GND</span><small>terra (2 pinos)</small></div>
+      <div class="chip blue"><span>Vin</span><small>entrada 9–15V</small></div>
+    </div>
+
+    <div class="analogy">
+      <div class="a-real">Uso prático</div>
+      <div class="a-content">
+        <div class="a-row"><span class="a-label">LED externo</span><span class="a-arrow">→</span><span class="a-val">+ no 5V, – no GND (com resistor de 220Ω)</span></div>
+        <div class="a-row"><span class="a-label">Sensor 3.3V</span><span class="a-arrow">→</span><span class="a-val">Alimentar pelo pino 3.3V, não pelo 5V!</span></div>
+        <div class="a-row"><span class="a-label">Bateria 9V</span><span class="a-arrow">→</span><span class="a-val">Conectar no Vin para usar sem USB</span></div>
+        <div class="a-row"><span class="a-label">Reset manual</span><span class="a-arrow">→</span><span class="a-val">Botão entre RESET e GND reinicia o programa</span></div>
+      </div>
+    </div>
+
+    <div class="callout danger">
+      <div class="icon">🔥</div>
+      <div class="content"><strong>Cuidado com a corrente!</strong><p>O pino 5V pode fornecer no máximo <strong>500mA</strong> (quando alimentado por USB). O pino 3.3V está limitado a <strong>50mA</strong>. Exceder esses limites pode danificar permanentemente o Arduino!</p></div>
+    </div>
+
+    <div class="callout info">
+      <div class="icon">🔌</div>
+      <div class="content"><strong>Alimentação sem USB</strong><p>Use o conector P4 (jack 2.1mm) ou o pino <strong>Vin</strong> para alimentar o Arduino com bateria ou fonte externa de 7 a 12V. O regulador interno converte para 5V automaticamente.</p></div>
+    </div>
+
+  </div>
+  <div class="lesson-footer"><span><span class="dot" style="color:var(--red)">●</span>Lição B.4</span><span>Pinos de Alimentação</span></div>
+</div>
+
+<!-- ══ ENCERRAMENTO ══ -->
+<div class="card th-teal">
+  <div class="sec-body" style="text-align:center; padding:38px 28px;">
+    <div style="font-size:3rem; margin-bottom:10px;">🎉⚡🔌</div>
+    <div style="font-family:var(--fun); font-size:1.9rem; color:var(--teal); margin-bottom:12px;">Cartilha Concluída!</div>
+    <p class="txt" style="text-align:center; max-width:580px; margin:0 auto 16px;">
+      Você agora conhece a <strong>estrutura completa do Arduino</strong>: linguagem C/C++, variáveis, operadores, controle de fluxo, pinos digitais, analógicos, comunicação serial e alimentação.
+    </p>
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:16px 0;">
+      <span class="tag t">🤖 Robótica</span>
+      <span class="tag o">🌡️ Sensores</span>
+      <span class="tag t">💡 Automação</span>
+      <span class="tag o">🎵 Instrumentos</span>
+      <span class="tag t">🏠 Casa inteligente</span>
+      <span class="tag o">🎮 Games físicos</span>
+    </div>
+    <p style="font-family:var(--fun); font-size:1rem; color:#7f8c8d; margin-top:12px; letter-spacing:.04em;">
+      Baseado na obra de João Alexandre da Silveira — www.revistadoarduino.com.br 📖
+    </p>
+    <div style="margin-top:18px; color:#bdc3c7; font-size:.76rem; font-family:var(--fun); letter-spacing:.1em;">
+      CARTILHA ARDUINO C/C++ — EDIÇÃO 2.0 — 2026
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrapper -->
+</body>
+</html>
